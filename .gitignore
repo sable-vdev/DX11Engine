@@ -39,3 +39,10 @@
 
 # debug information files
 *.dwo
+
+.vs/*
+*.tlog
+*.idb
+*.recipe
+*.log
+*.cso
