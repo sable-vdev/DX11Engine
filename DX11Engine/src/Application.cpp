@@ -15,10 +15,10 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle)
 	m_context->Init();
 
 	F32 data[] = {
-			-0.5f, -0.5f, .0f, 1.0f, 0.0f, 0.0f,
-			0.5f, -0.5f, .0f, 0.0f, 1.0f, 0.0f,
-			0.5f, 0.5f, .0f, 0.0f, 0.0f, 1.0f,
-			-0.5f, 0.5f, .0f, 1.0f, 0.0f, 0.0f,
+			-0.5f, -0.5f, .0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+			0.5f, -0.5f, .0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			0.5f, 0.5f, .0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+			-0.5f, 0.5f, .0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f
 	};
 
 	U32 indices[] =
@@ -32,7 +32,9 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle)
 
 	std::wstring path = L"..\\DX11Engine\\shaders\\";
 
-	m_vShader = new DX11VertexShader(m_context->GetDevice(), path, L"VertexShader.hlsl", VertexLayouts::PositionColor::Desc, ARRAYSIZE(VertexLayouts::PositionColor::Desc));
+	tex = new Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\tiles.png");
+
+	m_vShader = new DX11VertexShader(m_context->GetDevice(), path, L"VertexShader.hlsl", VertexLayouts::PositionColorTexcoord::Desc, ARRAYSIZE(VertexLayouts::PositionColorTexcoord::Desc));
 	m_pShader = new DX11PixelShader(m_context->GetDevice(), path, L"PixelShader.hlsl");
 }
 
@@ -42,6 +44,7 @@ Application::~Application()
 	delete m_vBuffer;
 	delete m_pShader;
 	delete m_vShader;
+	delete tex;
 }
 
 void Application::Run()
@@ -53,9 +56,12 @@ void Application::Run()
 
 		m_context->BeginFrame();
 
+		m_vBuffer->Bind(m_context->GetDeviceContext());
+
 		m_vShader->Bind(m_context->GetDeviceContext());
 		m_pShader->Bind(m_context->GetDeviceContext());
-		m_vBuffer->Bind(m_context->GetDeviceContext());
+
+		tex->Bind(m_context->GetDeviceContext());
 		m_iBuffer->DrawIndexed(m_context->GetDeviceContext());
 
 		m_context->EndFrame();

@@ -5,6 +5,7 @@
 #include "DX11Context.hpp"
 #include "Shader.hpp"
 #include "Buffer.hpp"
+#include "Texture.hpp"
 
 class Application
 {
@@ -25,5 +26,6 @@ private:
 	DX11IndexBuffer* m_iBuffer;
 	DX11VertexShader* m_vShader;
 	DX11PixelShader* m_pShader;
+	Texture* tex;
 };
 

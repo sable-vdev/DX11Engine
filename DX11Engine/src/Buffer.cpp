@@ -21,7 +21,7 @@ void DX11VertexBuffer::Bind(ID3D11DeviceContext* context) const
 {
 	if (context)
 	{
-		U32 stride = sizeof(float) * 6;
+		U32 stride = sizeof(float) * 8;
 		U32 offset = 0;
 		context->IASetVertexBuffers(0, 1, m_buffer.GetAddressOf(), &stride, &offset);
 	}
@@ -30,8 +30,10 @@ void DX11VertexBuffer::Bind(ID3D11DeviceContext* context) const
 void DX11VertexBuffer::Draw(ID3D11DeviceContext* context) const
 {
 	if (context)
+	{
 		Bind(context);
 		context->Draw(4, 0);
+	}
 }
 
 DX11IndexBuffer::DX11IndexBuffer(ID3D11Device* device, const void* data, U32 count, D3D11_USAGE usage) : m_indexCount(count)

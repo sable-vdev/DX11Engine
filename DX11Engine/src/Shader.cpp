@@ -24,6 +24,7 @@ void DX11VertexShader::Create(ID3D11Device* device, const std::wstring& shaderPa
 		errorBlob->Release();
 
 		ThrowIfFailed(hr);
+		return;
 	}
 
 	size_t pos = shaderName.find(L".");
@@ -87,6 +88,8 @@ void DX11PixelShader::Create(ID3D11Device* device, const std::wstring& shaderPat
 		errorBlob->Release();
 
 		ThrowIfFailed(hr);
+
+		return;
 	}
 
 	size_t pos = shaderName.find(L".");
