@@ -29,6 +29,8 @@ public:
 			SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWindow));
 
 			pWindow->m_hwnd = hwnd;
+
+			return TRUE;
 		}
 		else
 		{

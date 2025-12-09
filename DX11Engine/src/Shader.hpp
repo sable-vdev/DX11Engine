@@ -52,9 +52,12 @@ class DX11VertexShader
 {
 	template<typename T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	
 public:
 	DX11VertexShader(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName, D3D11_INPUT_ELEMENT_DESC* layout, U32 numElements);
 	void Bind(ID3D11DeviceContext* deviceContext);
+
 	//ID3D11VertexShader* GetShader() const { return m_vertexShader.Get(); }
 	//ID3D11InputLayout* GetLayout() const { return m_inputLayout.Get(); }
 private:
@@ -63,6 +66,7 @@ private:
 	ComPtr<ID3D11VertexShader> m_vertexShader;
 	ComPtr<ID3DBlob> m_vertexBuffer;
 	ComPtr<ID3D11InputLayout> m_inputLayout;
+	//ComPtr<D3D11_MAPPED_SUBRESOURCE> m_subresources;
 };
 
 class DX11PixelShader

@@ -26,7 +26,7 @@ class Texture
 
 public:
 	Texture(ID3D11Device* device, const std::string& file);
-
+	~Texture();
 	void Bind(ID3D11DeviceContext* deviceContext, U32 slot = 0);
 private:
 	TextureLoaded LoadFromFile(const std::string& file);

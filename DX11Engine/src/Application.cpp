@@ -14,7 +14,10 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle)
 
 	m_context->Init();
 
-	F32 data[] = {
+	m_input = std::make_unique<Input>();
+	m_camera = std::make_unique<Camera>();
+
+	float data[] = {
 			-0.5f, -0.5f, .0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 			0.5f, -0.5f, .0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 			0.5f, 0.5f, .0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
@@ -29,10 +32,11 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle)
 
 	m_vBuffer = new DX11VertexBuffer(m_context->GetDevice(), data, sizeof(data));
 	m_iBuffer = new DX11IndexBuffer(m_context->GetDevice(), indices, sizeof(indices) / sizeof(indices[0]));
+	m_cBuffer = new DX11ConstantBuffer<CBDMatrix>(m_context->GetDevice());
 
 	std::wstring path = L"..\\DX11Engine\\shaders\\";
 
-	tex = new Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\tiles.png");
+	tex = new Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\texture.png");
 
 	m_vShader = new DX11VertexShader(m_context->GetDevice(), path, L"VertexShader.hlsl", VertexLayouts::PositionColorTexcoord::Desc, ARRAYSIZE(VertexLayouts::PositionColorTexcoord::Desc));
 	m_pShader = new DX11PixelShader(m_context->GetDevice(), path, L"PixelShader.hlsl");
@@ -56,7 +60,19 @@ void Application::Run()
 
 		m_context->BeginFrame();
 
+		m_camera->Update();
+
 		m_vBuffer->Bind(m_context->GetDeviceContext());
+
+		auto matW = m_context->GetWorldMatrix();
+		auto matV = m_camera->GetViewMatrix();
+		auto matProj = m_context->GetProjectionMatrix();
+
+		CBDMatrix data{};
+		data.wvp = DirectX::XMMatrixMultiply(matW, matV);
+		data.wvp = DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(data.wvp, matProj));
+
+		m_cBuffer->BindVS(m_context->GetDeviceContext(), data);
 
 		m_vShader->Bind(m_context->GetDeviceContext());
 		m_pShader->Bind(m_context->GetDeviceContext());

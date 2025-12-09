@@ -18,12 +18,14 @@ DX11Context::~DX11Context()
 		m_deviceContext->Flush();
 		m_deviceContext.Reset();
 	}
+	
+	m_device.Reset();
 
 #ifndef NDEBUG
 	if (m_device)
 	{
 		ComPtr<ID3D11Debug> debug;
-		if (SUCCEEDED(m_device.As(&debug)))
+		if (!ThrowIfFailed(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug))))
 		{
 			debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL);
 			debug.Reset();
@@ -31,7 +33,6 @@ DX11Context::~DX11Context()
 	}
 #endif //!NDEBUG
 
-	m_device.Reset();
 }
 
 void DX11Context::Init()
@@ -42,6 +43,17 @@ void DX11Context::Init()
 	CreateRasterizerState();
 
 	SetRenderTarget();
+
+
+	float FOV = DirectX::XM_PIDIV4;
+	RECT r;
+	GetClientRect(m_hwnd, &r);
+	float aspect = ((float) r.right - r.left) / ((float) r.bottom - r.top);
+
+	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(FOV, aspect, 0.1f, 1000.0f);
+
+	m_worldMatrix = DirectX::XMMatrixIdentity();
+	m_orthographicMatrix = DirectX::XMMatrixOrthographicLH(((float)r.right - r.left), ((float)r.bottom - r.top), 0.1f, 1000.0f);
 }
 
 void DX11Context::CreateDeviceAndSwapChain(HWND hwnd)
@@ -209,8 +221,8 @@ void DX11Context::CreateRasterizerState()
 void DX11Context::SetViewport(U32 width, U32 height)
 {
 	D3D11_VIEWPORT vp{};
-	vp.Width = static_cast<F32>(width);
-	vp.Height = static_cast<F32>(height);
+	vp.Width = static_cast<float>(width);
+	vp.Height = static_cast<float>(height);
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0;
@@ -228,7 +240,7 @@ void DX11Context::SetRenderTarget()
 
 void DX11Context::BeginFrame()
 {
-	F32 clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f};
+	float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f};
 	m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
 	m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	SetRenderTarget();

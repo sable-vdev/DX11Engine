@@ -6,6 +6,9 @@
 #include "Shader.hpp"
 #include "Buffer.hpp"
 #include "Texture.hpp"
+#include "Input.hpp"
+#include "Camera.hpp"
+#include "ConstantBufferInfo.hpp"
 
 class Application
 {
@@ -21,9 +24,11 @@ private:
 	static Application* s_instance;
 	std::unique_ptr<Window> m_window;
 	std::unique_ptr<DX11Context> m_context;
-
+	std::unique_ptr<Input> m_input;
+	std::unique_ptr<Camera> m_camera;
 	DX11VertexBuffer* m_vBuffer;
 	DX11IndexBuffer* m_iBuffer;
+	DX11ConstantBuffer<CBDMatrix>* m_cBuffer;
 	DX11VertexShader* m_vShader;
 	DX11PixelShader* m_pShader;
 	Texture* tex;

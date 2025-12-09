@@ -1,6 +1,6 @@
 #include "Window.hpp"
 #include "Application.hpp"
-
+#include <iostream>
 Window::Window(U32 width, U32 height, const std::wstring& windowTitle) : m_windowTitle(windowTitle), m_windowClass(windowTitle + L"class"), 
 	m_hInstance(GetModuleHandle(nullptr)), m_hwnd(nullptr), m_width(width), m_height(height)
 {
@@ -22,7 +22,7 @@ Window::Window(U32 width, U32 height, const std::wstring& windowTitle) : m_windo
 	I32 posX = (GetSystemMetrics(SM_CXSCREEN) - m_width) / 2;
 	I32 posY = (GetSystemMetrics(SM_CYSCREEN) - m_height) / 2;
 
-	I32 windowStyles = WS_OVERLAPPEDWINDOW | WS_MAXIMIZE;
+	I32 windowStyles = WS_OVERLAPPEDWINDOW;
 
 	RECT rect = { 0, 0, m_width, m_height };
 	AdjustWindowRect(&rect, windowStyles, FALSE);
@@ -38,6 +38,7 @@ Window::Window(U32 width, U32 height, const std::wstring& windowTitle) : m_windo
 	if (m_hwnd != 0)
 	{
 		ShowWindow(m_hwnd, SW_SHOW);
+		ShowWindow(m_hwnd, SW_MAXIMIZE);
 		SetForegroundWindow(m_hwnd);
 		SetFocus(m_hwnd);
 	}
@@ -46,16 +47,21 @@ Window::Window(U32 width, U32 height, const std::wstring& windowTitle) : m_windo
 bool Window::Run()
 {
 	MSG msg = {};
-	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+	while (true)
 	{
-		if (msg.message == WM_QUIT)
-			return false;
+		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT)
+				return false;
 
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+
+			break;
+		}
+
+		return true;
 	}
-
-	return true;
 }
 
 LRESULT Window::HandleMessages(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -75,6 +81,18 @@ LRESULT Window::HandleMessages(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_width = lprect.right - lprect.left;
 		m_height = lprect.bottom - lprect.top;
 		Application::Get().OnResize(m_width, m_height);
+		return 0;
+	}
+	case WM_KEYDOWN:
+	{
+		Input::OnKeyPress(static_cast<I32>(wParam));
+		std::cout << "Down: " << wParam;
+		return 0;
+	}
+	case WM_KEYUP:
+	{
+		Input::OnKeyUp(static_cast<I32>(wParam));
+		std::cout << "Up: " << wParam;
 		return 0;
 	}
 	default:

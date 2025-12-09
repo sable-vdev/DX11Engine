@@ -5,8 +5,7 @@
 
 Texture::Texture(ID3D11Device* device, const std::string& file)
 {
-
-	auto tex = LoadFromFile(file);
+	Texture::TextureLoaded tex = LoadFromFile(file);
 
 	D3D11_TEXTURE2D_DESC desc{};
 	desc.Width = tex.width;
@@ -40,6 +39,14 @@ Texture::Texture(ID3D11Device* device, const std::string& file)
 	stbi_image_free(tex.pixels);
 
 	CreateSampler(device);
+}
+
+Texture::~Texture()
+{
+	if (m_shaderResourceView)
+		m_shaderResourceView.Reset();
+	if (m_samplerState)
+		m_samplerState.Reset();
 }
 
 void Texture::Bind(ID3D11DeviceContext* deviceContext, U32 slot)
