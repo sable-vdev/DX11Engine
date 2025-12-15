@@ -94,18 +94,14 @@ void Application::Run()
 
 		m_timer->Tick();
 
-		static float rotation = 0.0f;
-		rotation -= 0.0174532925f * 15.0f * m_timer->GetDeltaTime();
-
-		if (rotation < 0.0f)
-			rotation = 360.0f;
-
 		m_timer->GetFramesPerSecond();
 
 		if (!m_window->Run())
 			break;
 
 		m_camera->Update(m_timer->GetDeltaTime());
+
+		model1->Update(m_timer->GetDeltaTime());
 
 		m_context->BeginFrame();
 		/*
@@ -129,9 +125,9 @@ void Application::Run()
 		m_iBuffer->DrawIndexed(m_context->GetDeviceContext());
 		*/
 
-		model1->Draw(m_context->GetDeviceContext());
+		model1->Render(m_context->GetDeviceContext());
 
-		m_context->EndFrame(true);
+		m_context->EndFrame(false);
 	}
 }
 

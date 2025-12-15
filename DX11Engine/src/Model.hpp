@@ -14,13 +14,14 @@ public:
 
 	~Model();
 
-	void Draw(ID3D11DeviceContext* context);
+	void Update(float dt);
+	void Render(ID3D11DeviceContext* context);
 private:
 	DX11VertexBuffer m_vBuffer;
 	DX11IndexBuffer m_iBuffer;
 	DX11ConstantBuffer<CBDMatrix> m_cBuffer;
 	DX11VertexShader m_vShader;
-	bool m_padding[8];
+	bool m_padding[8] = { false };
 	DX11PixelShader m_pShader;
 
 	Mat4x4 m_modelMatrix = DirectX::XMMatrixIdentity();
