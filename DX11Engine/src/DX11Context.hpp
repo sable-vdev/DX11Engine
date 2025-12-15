@@ -32,8 +32,6 @@ public:
 	ID3D11DeviceContext* GetDeviceContext() const { return m_deviceContext.Get(); }
 
 	Mat4x4 GetWorldMatrix() const { return m_worldMatrix; }
-	Mat4x4 GetProjectionMatrix() const { return m_projectionMatrix; }
-	Mat4x4 GetOrthographicMatrix() const { return m_orthographicMatrix; }
 private:
 	void CreateDeviceAndSwapChain(HWND hwnd);
 	void CreateRenderTargetView();
@@ -50,7 +48,5 @@ private:
 	ComPtr<ID3D11DepthStencilView> m_depthStencilView;
 	ComPtr<ID3D11RasterizerState2> m_rasterizerState;
 	Mat4x4 m_worldMatrix;
-	Mat4x4 m_projectionMatrix;
-	Mat4x4 m_orthographicMatrix;
 };
 

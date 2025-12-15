@@ -9,6 +9,8 @@
 #include "Input.hpp"
 #include "Camera.hpp"
 #include "ConstantBufferInfo.hpp"
+#include "Timer.hpp"
+#include "Model.hpp"
 
 class Application
 {
@@ -26,11 +28,15 @@ private:
 	std::unique_ptr<DX11Context> m_context;
 	std::unique_ptr<Input> m_input;
 	std::unique_ptr<Camera> m_camera;
+	std::unique_ptr<Timer> m_timer;
+	Model* model1;
+	/*
 	DX11VertexBuffer* m_vBuffer;
 	DX11IndexBuffer* m_iBuffer;
 	DX11ConstantBuffer<CBDMatrix>* m_cBuffer;
 	DX11VertexShader* m_vShader;
 	DX11PixelShader* m_pShader;
+	*/
 	Texture* tex;
 };
 

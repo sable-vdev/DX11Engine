@@ -1,6 +1,6 @@
 #include "Window.hpp"
 #include "Application.hpp"
-#include <iostream>
+
 Window::Window(U32 width, U32 height, const std::wstring& windowTitle) : m_windowTitle(windowTitle), m_windowClass(windowTitle + L"class"), 
 	m_hInstance(GetModuleHandle(nullptr)), m_hwnd(nullptr), m_width(width), m_height(height)
 {
@@ -17,14 +17,14 @@ Window::Window(U32 width, U32 height, const std::wstring& windowTitle) : m_windo
 	wc.lpszClassName = m_windowClass.c_str();
 
 	if (!RegisterClass(&wc))
-		std::cout << "Failed to register class\n";
+		LOG("Failed to register class\n");
 
 	I32 posX = (GetSystemMetrics(SM_CXSCREEN) - m_width) / 2;
 	I32 posY = (GetSystemMetrics(SM_CYSCREEN) - m_height) / 2;
 
 	I32 windowStyles = WS_OVERLAPPEDWINDOW;
 
-	RECT rect = { 0, 0, m_width, m_height };
+	RECT rect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
 	AdjustWindowRect(&rect, windowStyles, FALSE);
 	I32 adjustedWidth = rect.right - rect.left;
 	I32 adjustedHeight = rect.bottom - rect.top;
@@ -33,7 +33,7 @@ Window::Window(U32 width, U32 height, const std::wstring& windowTitle) : m_windo
 		posX, posY, adjustedWidth, adjustedHeight, nullptr, nullptr, m_hInstance, this);
 
 	if (!m_hwnd) 
-		std::cout << "Failed to initialize the window handle";
+		LOG("Failed to initialize the window handle");
 
 	if (m_hwnd != 0)
 	{
@@ -86,13 +86,46 @@ LRESULT Window::HandleMessages(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 	{
 		Input::OnKeyPress(static_cast<I32>(wParam));
-		std::cout << "Down: " << wParam;
 		return 0;
 	}
 	case WM_KEYUP:
 	{
 		Input::OnKeyUp(static_cast<I32>(wParam));
-		std::cout << "Up: " << wParam;
+		return 0;
+	}
+	case WM_LBUTTONDOWN:
+	{
+		Input::OnMousePress(0);
+		return 0;
+	}
+	case WM_LBUTTONUP:
+	{
+		Input::OnMouseUp(0);
+		return 0;
+	}
+	case WM_MBUTTONDOWN:
+	{
+		Input::OnMousePress(1);
+		return 0;
+	}
+	case WM_MBUTTONUP:
+	{
+		Input::OnMouseUp(1);
+		return 0;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		Input::OnMousePress(2);
+		return 0;
+	}
+	case WM_RBUTTONUP:
+	{
+		Input::OnMouseUp(2);
+		return 0;
+	}
+	case WM_MOUSEMOVE:
+	{
+		Input::OnMouseMove(LOWORD(lParam), HIWORD(lParam));
 		return 0;
 	}
 	default:

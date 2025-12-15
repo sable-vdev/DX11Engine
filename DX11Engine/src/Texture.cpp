@@ -45,6 +45,7 @@ Texture::~Texture()
 {
 	if (m_shaderResourceView)
 		m_shaderResourceView.Reset();
+
 	if (m_samplerState)
 		m_samplerState.Reset();
 }
@@ -65,7 +66,10 @@ Texture::TextureLoaded Texture::LoadFromFile(const std::string& file)
 {
 	TextureLoaded tex{};
 
+
 	tex.pixels = stbi_load(file.c_str(), &tex.width, &tex.height, &tex.channels, 4);
+
+	//stbi__vertical_flip(tex.pixels, tex.width, tex.height, tex.channels);
 
 	if (!tex.pixels)
 	{

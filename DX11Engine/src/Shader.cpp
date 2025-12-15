@@ -16,7 +16,7 @@ void DX11VertexShader::Create(ID3D11Device* device, const std::wstring& shaderPa
 
 	std::wstring file = shaderPath + shaderName;
 
-	auto hr = D3DCompileFromFile(file.c_str(), nullptr, 0, "main", "vs_5_0", flags, 0, m_vertexBuffer.GetAddressOf(), &errorBlob);
+	auto hr = D3DCompileFromFile(file.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0", flags, 0, m_vertexBuffer.GetAddressOf(), &errorBlob);
 
 	if (FAILED(hr))
 	{
@@ -80,7 +80,7 @@ void DX11PixelShader::Create(ID3D11Device* device, const std::wstring& shaderPat
 
 	std::wstring file = shaderPath + shaderName;
 
-	auto hr = D3DCompileFromFile(file.c_str(), nullptr, 0, "main", "ps_5_0", flags, 0, m_pixelBuffer.GetAddressOf(), &errorBlob);
+	auto hr = D3DCompileFromFile(file.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0", flags, 0, m_pixelBuffer.GetAddressOf(), &errorBlob);
 
 	if (FAILED(hr))
 	{

@@ -17,11 +17,6 @@ class Texture
 	{
 		U8* pixels;
 		I32 width, height, channels;
-
-		inline ~TextureLoaded()
-		{
-			//delete pixels;
-		}
 	};
 
 public:

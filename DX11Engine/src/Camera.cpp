@@ -7,35 +7,51 @@
 float3 Camera::s_up = float3(0.0f, 1.0f, 0.0f);
 float3 Camera::s_lookAt = float3(0.0f, 0.0f, 1.0f);
 
-Camera::Camera() : m_position(0.0f, 0.0f, -5.0f), m_rotation(0.0f, 0.0f, 0.0f), m_viewMatrix()
+Mat4x4 Camera::s_viewMatrix = DirectX::XMMatrixIdentity();
+Mat4x4 Camera::s_projectionMatrix = DirectX::XMMatrixIdentity();
+Mat4x4 Camera::s_orthographicMatrix = DirectX::XMMatrixIdentity();
+
+Camera::Camera(I32 width, I32 height) : m_position(0.0f, 0.0f, -5.0f, 1.0f), m_rotation(0.0f, 0.0f, 0.0f, 1.0f)
 {
+	m_aspect = static_cast<float>(width) / static_cast<float>(height);
+
+	s_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(m_FOV, m_aspect, m_nearZ, m_farZ);
+	s_orthographicMatrix = DirectX::XMMatrixOrthographicLH(static_cast<float>(width), static_cast<float>(height), m_nearZ, m_farZ);
 }
 
 Camera::~Camera()
 {
 }
 
-void Camera::Update()
+void Camera::Update(float dt)
 {
-	if (Input::GetKey('W'))
+	if (Input::GetKey(KeyCode::W))
 	{
-		m_position.z += 0.001f;
+		m_position.z += 15.0f * dt;
 	}
-	else if (Input::GetKey('S'))
+	if (Input::GetKey(KeyCode::S))
 	{
-		m_position.z -= 0.001f;
+		m_position.z -= 15.0f * dt;
 	}
-	else if (Input::GetKey('A'))
+	if (Input::GetKey(KeyCode::A))
 	{
-		m_position.x -= 0.001f;
+		m_position.x -= 15.0f * dt;
 	}
-	else if (Input::GetKey('D'))
+	if (Input::GetKey(KeyCode::D))
 	{
-		m_position.x += 0.001f;
+		m_position.x += 15.0f * dt;
+	}
+	if (Input::GetKey(KeyCode::Space))
+	{
+		m_position.y += 15.0f * dt;
+	}
+	if (Input::GetKey(KeyCode::Shift))
+	{
+		m_position.y -= 15.0f * dt;
 	}
 
 	Vec4 upV = DirectX::XMLoadFloat3(&s_up);
-	Vec4 positionV = DirectX::XMLoadFloat3(&m_position);
+	Vec4 positionV = DirectX::XMLoadFloat4(&m_position);
 	Vec4 lookAtV = DirectX::XMLoadFloat3(&s_lookAt);
 
 	float pitch, yaw, roll;
@@ -46,11 +62,19 @@ void Camera::Update()
 	
 	Mat4x4 rotationMat = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
 
-	upV = DirectX::XMVector3TransformCoord(upV, rotationMat);
-	lookAtV = DirectX::XMVector3TransformCoord(lookAtV, rotationMat);
+	upV = DirectX::XMVector3TransformNormal(upV, rotationMat);
+	lookAtV = DirectX::XMVector3TransformNormal(lookAtV, rotationMat);
 
 	lookAtV = DirectX::XMVectorAdd(positionV, lookAtV);
 
 	//look at function for left-handed coordinate system
-	m_viewMatrix = DirectX::XMMatrixLookAtLH(positionV, lookAtV, upV);
+	s_viewMatrix = DirectX::XMMatrixLookAtLH(positionV, lookAtV, upV);
+}
+
+void Camera::OnResize(I32 width, I32 height)
+{
+	m_aspect = static_cast<float>(width) / static_cast<float>(height);
+
+	s_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(m_FOV, m_aspect, m_nearZ, m_farZ);
+	s_orthographicMatrix = DirectX::XMMatrixOrthographicLH(static_cast<float>(width), static_cast<float>(height), m_nearZ, m_farZ);
 }

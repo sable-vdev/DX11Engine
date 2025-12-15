@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Buffer.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Model.hpp" />
     <ClInclude Include="src\ConstantBufferInfo.hpp" />
     <ClInclude Include="src\Input.hpp" />
     <ClInclude Include="src\Camera.hpp" />
@@ -158,6 +160,7 @@
     <ClInclude Include="src\Application.hpp" />
     <ClInclude Include="src\EngineTypes.hpp" />
     <ClInclude Include="src\Logger.hpp" />
+    <ClInclude Include="src\Timer.hpp" />
     <ClInclude Include="src\Window.hpp" />
     <ClInclude Include="src\Texture.hpp" />
   </ItemGroup>

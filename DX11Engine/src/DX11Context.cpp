@@ -1,6 +1,6 @@
 #include "DX11Context.hpp"
 
-DX11Context::DX11Context(HWND hwnd) : m_hwnd(hwnd)
+DX11Context::DX11Context(HWND hwnd) : m_hwnd(hwnd), m_worldMatrix()
 {
 }
 
@@ -44,16 +44,7 @@ void DX11Context::Init()
 
 	SetRenderTarget();
 
-
-	float FOV = DirectX::XM_PIDIV4;
-	RECT r;
-	GetClientRect(m_hwnd, &r);
-	float aspect = ((float) r.right - r.left) / ((float) r.bottom - r.top);
-
-	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(FOV, aspect, 0.1f, 1000.0f);
-
 	m_worldMatrix = DirectX::XMMatrixIdentity();
-	m_orthographicMatrix = DirectX::XMMatrixOrthographicLH(((float)r.right - r.left), ((float)r.bottom - r.top), 0.1f, 1000.0f);
 }
 
 void DX11Context::CreateDeviceAndSwapChain(HWND hwnd)
@@ -242,7 +233,7 @@ void DX11Context::BeginFrame()
 {
 	float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f};
 	m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
-	m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+	m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	SetRenderTarget();
 	m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
 	m_deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

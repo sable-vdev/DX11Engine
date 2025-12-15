@@ -2,11 +2,12 @@
 
 bool Input::m_keys[256];
 bool Input::m_mouseButtons[3];
+float2 Input::m_mousePos;
 
 Input::Input()
 {
 
-	for (int i = 0; i < 256; i++)
+	for (int i{}; i < 256; i++)
 	{
 		m_keys[i] = false;
 
@@ -23,9 +24,9 @@ Input::~Input()
 {
 }
 
-bool Input::GetKey(I32 key)
+bool Input::GetKey(KeyCode key)
 {
-	return m_keys[key];
+	return m_keys[(int)key];
 }
 
 void Input::OnKeyPress(I32 key)
@@ -40,8 +41,10 @@ void Input::OnKeyUp(I32 key)
 
 void Input::OnMousePress(I32 key)
 {
+	m_mouseButtons[key] = true;
 }
 
-void Input::OnMouseDown(I32 key)
+void Input::OnMouseUp(I32 key)
 {
+	m_mouseButtons[key] = false;
 }
