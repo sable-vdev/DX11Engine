@@ -1,6 +1,8 @@
 #include "Window.hpp"
 #include "Application.hpp"
 
+#include "Imgui/imgui_impl_win32.h"
+
 Window::Window(U32 width, U32 height, const std::wstring& windowTitle) : m_windowTitle(windowTitle), m_windowClass(windowTitle + L"class"), 
 	m_hInstance(GetModuleHandle(nullptr)), m_hwnd(nullptr), m_width(width), m_height(height)
 {
@@ -64,8 +66,13 @@ bool Window::Run()
 	}
 }
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT Window::HandleMessages(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(m_hwnd, uMsg, wParam, lParam))
+		return 0;
+
 	switch (uMsg)
 	{
 	case WM_DESTROY:

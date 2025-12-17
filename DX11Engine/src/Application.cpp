@@ -63,7 +63,7 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle)
 		20, 21, 22,  20, 22, 23 
 	};
 
-	DX11VertexBuffer vb = DX11VertexBuffer(m_context->GetDevice(), data, VertexLayouts::PositionTexcoord::Stride, sizeof(data));
+	DX11VertexBuffer vb = DX11VertexBuffer(m_context->GetDevice(), data, VertexLayouts::PositionTexcoordNormal::Stride, sizeof(data));
 	DX11IndexBuffer ib = DX11IndexBuffer(m_context->GetDevice(), indices, sizeof(indices) / sizeof(indices[0]));
 	DX11ConstantBuffer<CBDMatrix> cb = DX11ConstantBuffer<CBDMatrix>(m_context->GetDevice());
 	
@@ -71,7 +71,7 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle)
 	
 	Texture tex = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\texture.png");
 	
-	DX11VertexShader vs = DX11VertexShader(m_context->GetDevice(), path, L"VertexShader.hlsl", VertexLayouts::PositionTexcoord::Desc, 2);
+	DX11VertexShader vs = DX11VertexShader(m_context->GetDevice(), path, L"VertexShader.hlsl", VertexLayouts::PositionTexcoordNormal::Desc, VertexLayouts::PositionTexcoordNormal::Count);
 	DX11PixelShader ps = DX11PixelShader(m_context->GetDevice(), path, L"PixelShader.hlsl");
 
 	model1 = new Model(vb, ib, cb, vs, ps, tex);
