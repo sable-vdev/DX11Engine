@@ -9,6 +9,7 @@
 #include "Camera.hpp"
 #include "Timer.hpp"
 #include "Model.hpp"
+#include "ImGuiLayer.hpp"
 
 class Application
 {
@@ -19,6 +20,36 @@ public:
 
 	void OnResize(U32 width, U32 height);
 
+	ID3D11Device* GetDevice() const 
+	{ 
+		if (m_context) 
+			return m_context->GetDevice(); 
+	}
+
+	ID3D11DeviceContext* GetContext() const
+	{
+		if (m_context)
+			return m_context->GetDeviceContext();
+	}
+
+	HWND GetHWND() const
+	{
+		if (m_window)
+			return m_window->GetHWND();
+	}
+
+	U32 GetWidth() const
+	{
+		if (m_window)
+			return m_window->GetWidth();
+	}
+
+	U32 GetHeight() const
+	{
+		if (m_window)
+			return m_window->GetHeight();
+	}
+
 	static inline Application& Get() { return *s_instance; }
 private:
 	static Application* s_instance;
@@ -27,6 +58,8 @@ private:
 	std::unique_ptr<Input> m_input;
 	std::unique_ptr<Camera> m_camera;
 	std::unique_ptr<Timer> m_timer;
+	std::unique_ptr<ImGuiLayer> m_imguiLayer;
+
 	Model* model1;
 	/*
 	DX11VertexBuffer* m_vBuffer;

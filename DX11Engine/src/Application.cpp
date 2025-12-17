@@ -18,6 +18,9 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle)
 	m_camera = std::make_unique<Camera>(m_window->GetWidth(), m_window->GetHeight());
 	m_timer = std::make_unique<Timer>();
 
+
+	m_imguiLayer = std::make_unique<ImGuiLayer>();
+
 	float data[] = {
 		-0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
 		-0.5f,  0.5f,  0.5f, 0.0f, 0.0f,
@@ -97,6 +100,9 @@ void Application::Run()
 		m_context->BeginFrame();
 
 		model1->Render(m_context->GetDeviceContext());
+
+
+		m_imguiLayer->Render();
 
 		m_context->EndFrame(false);
 	}

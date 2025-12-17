@@ -4,4 +4,5 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="DX11Engine/DX11Engine.vcxproj" Id="1718f614-0e0b-41a8-bf62-a66ac2c4992a" />
+  <Project Path="imgui_lib/imgui_lib.vcxproj" Id="e64d4f7c-2b30-4c26-84d3-975f5060a72a" />
 </Solution>
