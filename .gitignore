@@ -46,3 +46,6 @@
 *.recipe
 *.log
 *.cso
+
+*.iobj
+*.ipdb
