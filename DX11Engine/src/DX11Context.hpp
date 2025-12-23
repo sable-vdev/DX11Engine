@@ -35,7 +35,7 @@ public:
 private:
 	void CreateDeviceAndSwapChain(HWND hwnd);
 	void CreateRenderTargetView();
-	void CreateDepthStencilView();
+	void CreateDepthStencilView(U32 width, U32 height);
 	void CreateRasterizerState();
 	void SetRenderTarget();
 private:
@@ -48,5 +48,6 @@ private:
 	ComPtr<ID3D11DepthStencilView> m_depthStencilView;
 	ComPtr<ID3D11RasterizerState2> m_rasterizerState;
 	Mat4x4 m_worldMatrix;
+	bool m_allowTearing = false;
 };
 

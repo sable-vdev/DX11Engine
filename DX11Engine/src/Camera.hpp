@@ -1,10 +1,11 @@
 #pragma once
 #include "EngineTypes.hpp"
-#include "Timer.hpp"
+#include "ConstantBufferInfo.hpp"
 
 class Camera
 {
 public:
+	
 	Camera(I32 width, I32 height);
 	~Camera();
 
@@ -15,6 +16,8 @@ public:
 	static inline Mat4x4 GetProjectionMatrix() { return s_projectionMatrix; }
 	static inline Mat4x4 GetOrthographicMatrix() { return s_orthographicMatrix; }
 
+	static inline CBDCamera GetConstantBufferInfo() { return s_cameraConstantInfo; }
+
 	inline float4 GetPosition() const { return m_position; }
 	inline float4 GetRotation() const { return m_rotation; }
 private:
@@ -23,6 +26,7 @@ private:
 	static Mat4x4 s_viewMatrix;
 	static Mat4x4 s_projectionMatrix;
 	static Mat4x4 s_orthographicMatrix;
+	static CBDCamera s_cameraConstantInfo;
 
 	float4 m_position = float4(0.0f, 0.0f, -5.0f, 0.0f);
 	float4 m_rotation;

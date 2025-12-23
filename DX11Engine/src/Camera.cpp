@@ -11,12 +11,16 @@ Mat4x4 Camera::s_viewMatrix = DirectX::XMMatrixIdentity();
 Mat4x4 Camera::s_projectionMatrix = DirectX::XMMatrixIdentity();
 Mat4x4 Camera::s_orthographicMatrix = DirectX::XMMatrixIdentity();
 
+CBDCamera Camera::s_cameraConstantInfo = CBDCamera{};
+
 Camera::Camera(I32 width, I32 height) : m_position(0.0f, 0.0f, -5.0f, 1.0f), m_rotation(0.0f, 0.0f, 0.0f, 1.0f)
 {
 	m_aspect = static_cast<float>(width) / static_cast<float>(height);
 
 	s_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(m_FOV, m_aspect, m_nearZ, m_farZ);
 	s_orthographicMatrix = DirectX::XMMatrixOrthographicLH(static_cast<float>(width), static_cast<float>(height), m_nearZ, m_farZ);
+
+	s_cameraConstantInfo.cameraPosition = m_position;
 }
 
 Camera::~Camera()
@@ -69,6 +73,8 @@ void Camera::Update(float dt)
 
 	//look at function for left-handed coordinate system
 	s_viewMatrix = DirectX::XMMatrixLookAtLH(positionV, lookAtV, upV);
+
+	s_cameraConstantInfo.cameraPosition = m_position;
 }
 
 void Camera::OnResize(I32 width, I32 height)

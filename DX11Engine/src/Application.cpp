@@ -22,35 +22,35 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle)
 	m_imguiLayer = std::make_unique<ImGuiLayer>();
 
 	float data[] = {
-		-0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f, 0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f, 1.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
 		
-		0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f,
+		0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f,
+		-0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,
+		-0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f,
 
-		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f,
 
-		0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
-		0.5f,  0.5f,  0.5f, 0.0f, 0.0f,
-		0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
-		0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+		0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+		0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
 
-		-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
-		0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
 
-		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-		0.5f, -0.5f, -0.5f, 1.0f, 1.0f
+		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+		0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f
 	};
 
 	U32 indices[] =
@@ -66,15 +66,17 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle)
 	DX11VertexBuffer vb = DX11VertexBuffer(m_context->GetDevice(), data, VertexLayouts::PositionTexcoordNormal::Stride, sizeof(data));
 	DX11IndexBuffer ib = DX11IndexBuffer(m_context->GetDevice(), indices, sizeof(indices) / sizeof(indices[0]));
 	DX11ConstantBuffer<CBDMatrix> cb = DX11ConstantBuffer<CBDMatrix>(m_context->GetDevice());
+	DX11ConstantBuffer<CBDLight> clb = DX11ConstantBuffer<CBDLight>(m_context->GetDevice());
+	DX11ConstantBuffer<CBDCamera> clCam = DX11ConstantBuffer<CBDCamera>(m_context->GetDevice());
 	
 	std::wstring path = L"..\\DX11Engine\\shaders\\";
 	
-	Texture tex = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\texture.png");
+	Texture tex = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\container2.png");
 	
 	DX11VertexShader vs = DX11VertexShader(m_context->GetDevice(), path, L"VertexShader.hlsl", VertexLayouts::PositionTexcoordNormal::Desc, VertexLayouts::PositionTexcoordNormal::Count);
 	DX11PixelShader ps = DX11PixelShader(m_context->GetDevice(), path, L"PixelShader.hlsl");
 
-	model1 = new Model(vb, ib, cb, vs, ps, tex);
+	model1 = new Model(vb, ib, cb, clb, clCam, vs, ps, tex);
 }
 
 Application::~Application()
@@ -104,7 +106,7 @@ void Application::Run()
 
 		m_imguiLayer->Render();
 
-		m_context->EndFrame(false);
+		m_context->EndFrame(true);
 	}
 }
 

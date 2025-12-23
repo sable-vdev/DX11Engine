@@ -10,6 +10,7 @@ class Model
 {
 public:
 	Model(const DX11VertexBuffer& vBuffer, const DX11IndexBuffer& iBuffer, const DX11ConstantBuffer<CBDMatrix>& cBuffer,
+		const DX11ConstantBuffer<CBDLight>& cLightBuffer, const DX11ConstantBuffer<CBDCamera>& cCameraBuffer,
 		const DX11VertexShader& vShader, const DX11PixelShader& pShader, const Texture& tex);
 
 	~Model();
@@ -25,6 +26,8 @@ private:
 	DX11VertexBuffer m_vBuffer;
 	DX11IndexBuffer m_iBuffer;
 	DX11ConstantBuffer<CBDMatrix> m_cBuffer;
+	DX11ConstantBuffer<CBDLight> m_cLightBuffer;
+	DX11ConstantBuffer<CBDCamera> m_cCameraBuffer;
 	DX11VertexShader m_vShader;
 	bool m_padding[8] = { false };
 	DX11PixelShader m_pShader;

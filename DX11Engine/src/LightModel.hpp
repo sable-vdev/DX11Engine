@@ -1,14 +1,7 @@
 #pragma once
 #include "EngineTypes.hpp"
 
-struct CBDMatrix
-{
-	Mat4x4 normal;
-	Mat4x4 model;
-	Mat4x4 mvp;
-};
-
-struct CBDLight
+struct LightModel
 {
 	float4 ambientColor;
 	float4 diffuseColor;
@@ -17,10 +10,7 @@ struct CBDLight
 	float specularPower;
 	float3 padding0;
 
-	Vec4 lightDirection;
+	float3 lightDirection;
+	float padding1;
 };
 
-struct CBDCamera
-{
-	float4 cameraPosition;
-};

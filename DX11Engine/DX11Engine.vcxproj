@@ -113,12 +113,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui_lib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);imgui_lib.lib;</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Dev\DX11Engine\imgui_lib\bin\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -131,18 +131,18 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui_lib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);imgui_lib.lib;</AdditionalDependencies>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Dev\DX11Engine\imgui_lib\bin\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\LightModel.cpp" />
     <ClCompile Include="src\ImGuiLayer.cpp" />
-    <ClCompile Include="src\Imgui\imgui.cpp" />
     <ClCompile Include="src\Imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="src\Imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="src\Model.cpp" />
@@ -157,8 +157,8 @@
     <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\LightModel.hpp" />
     <ClInclude Include="src\ImGuiLayer.hpp" />
-    <ClInclude Include="src\Imgui\imgui.h" />
     <ClInclude Include="src\Imgui\imgui_impl_dx11.h" />
     <ClInclude Include="src\Imgui\imgui_impl_win32.h" />
     <ClInclude Include="src\Model.hpp" />
@@ -175,6 +175,11 @@
     <ClInclude Include="src\Timer.hpp" />
     <ClInclude Include="src\Window.hpp" />
     <ClInclude Include="src\Texture.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\imgui_lib\imgui_lib.vcxproj">
+      <Project>{e64d4f7c-2b30-4c26-84d3-975f5060a72a}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -59,14 +59,14 @@ public:
 		cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-		device->CreateBuffer(&cbDesc, nullptr, &m_buffer);
+		ThrowIfFailed(device->CreateBuffer(&cbDesc, nullptr, &m_buffer));
 	}
 	~DX11ConstantBuffer() { m_buffer.Reset(); m_buffer = nullptr; };
 
 	/*
 	* Binds the buffer
 	*/
-	inline void BindVS(ID3D11DeviceContext* context, const T& data) const
+	inline void BindVS(ID3D11DeviceContext* context, const T& data, U32 slot = 0) const
 	{
 		D3D11_MAPPED_SUBRESOURCE msbData{};
 
@@ -77,7 +77,24 @@ public:
 
 		context->Unmap(m_buffer.Get(), 0);
 
-		context->VSSetConstantBuffers(0, 1, m_buffer.GetAddressOf());
+		context->VSSetConstantBuffers(slot, 1, m_buffer.GetAddressOf());
+	}
+
+	/*
+	* Binds the buffer
+	*/
+	inline void BindPS(ID3D11DeviceContext* context, const T& data, U32 slot = 0) const
+	{
+		D3D11_MAPPED_SUBRESOURCE msbData{};
+
+		context->Map(m_buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msbData);
+		T* dptr = static_cast<T*>(msbData.pData);
+
+		*dptr = data;
+
+		context->Unmap(m_buffer.Get(), 0);
+
+		context->PSSetConstantBuffers(slot, 1, m_buffer.GetAddressOf());
 	}
 
 private:

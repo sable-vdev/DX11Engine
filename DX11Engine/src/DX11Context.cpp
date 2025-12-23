@@ -39,7 +39,14 @@ void DX11Context::Init()
 {
 	CreateDeviceAndSwapChain(m_hwnd);
 	CreateRenderTargetView();
-	CreateDepthStencilView();
+
+	U32 width = 0, height = 0;
+	RECT r{};
+	GetClientRect(m_hwnd, &r);
+	width = r.right - r.left;
+	height = r.bottom - r.top;
+
+	CreateDepthStencilView(width, height);
 	CreateRasterizerState();
 
 	SetRenderTarget();
@@ -57,6 +64,10 @@ void DX11Context::CreateDeviceAndSwapChain(HWND hwnd)
 
 	ComPtr<IDXGIFactory7> factory;
 	ThrowIfFailed(CreateDXGIFactory2(0, IID_PPV_ARGS(&factory)));
+
+	BOOL allow = FALSE;
+	ThrowIfFailed(factory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allow, sizeof(allow)));
+	m_allowTearing = allow == TRUE;
 
 	ComPtr<IDXGIAdapter4> adapter;
 	ThrowIfFailed(factory->EnumAdapterByGpuPreference(0, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter)));
@@ -80,11 +91,12 @@ void DX11Context::CreateDeviceAndSwapChain(HWND hwnd)
 	scDesc.Height = height;
 	scDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+	scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	scDesc.SampleDesc.Count = 1;
 	scDesc.SampleDesc.Quality = 0;
 	scDesc.Scaling = DXGI_SCALING_STRETCH;
 	scDesc.Stereo = FALSE;
+	scDesc.Flags = m_allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
 
 	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0 };
 	ComPtr<IDXGISwapChain1> swapChain = nullptr;
@@ -107,7 +119,7 @@ void DX11Context::CreateDeviceAndSwapChain(HWND hwnd)
 	if (SUCCEEDED(deviceContext.As(&m_deviceContext)))
 	{
 		deviceContext.Reset();
-	}
+	};
 
 	//disableing alt+enter fullscreen toggle
 	ThrowIfFailed(factory->MakeWindowAssociation(hwnd, DXGI_MWA_NO_ALT_ENTER));
@@ -129,15 +141,9 @@ void DX11Context::CreateRenderTargetView()
 	backBuffer.Reset();
 }
 
-void DX11Context::CreateDepthStencilView()
+void DX11Context::CreateDepthStencilView(U32 width, U32 height)
 {
 	ComPtr<ID3D11Texture2D> depthStencil = nullptr;
-
-	I32 width = 0, height = 0;
-	RECT r{};
-	GetClientRect(m_hwnd, &r);
-	width = r.right - r.left;
-	height = r.bottom - r.top;
 
 	D3D11_TEXTURE2D_DESC texDesc{};
 	texDesc.Width = width;
@@ -196,7 +202,7 @@ void DX11Context::CreateRasterizerState()
 {
 	D3D11_RASTERIZER_DESC2 rasDesc{};
 	rasDesc.FillMode = D3D11_FILL_SOLID;
-	rasDesc.CullMode = D3D11_CULL_BACK;
+	rasDesc.CullMode = D3D11_CULL_NONE;
 	rasDesc.FrontCounterClockwise = TRUE;
 	rasDesc.DepthBias = 0;
 	rasDesc.DepthBiasClamp = 0.0f;
@@ -242,8 +248,10 @@ void DX11Context::BeginFrame()
 
 void DX11Context::EndFrame(bool vsync)
 {
-	U32 syncInterval = vsync ? 1 : 0;
-	ThrowIfFailed(m_swapChain->Present(syncInterval, 0));
+	if(vsync)
+		ThrowIfFailed(m_swapChain->Present(1, 0));
+	else
+		ThrowIfFailed(m_swapChain->Present(0, m_allowTearing ? DXGI_PRESENT_ALLOW_TEARING : 0));
 }
 
 void DX11Context::OnResize(U32 width, U32 height)
@@ -254,11 +262,12 @@ void DX11Context::OnResize(U32 width, U32 height)
 	m_deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 
 	m_renderTargetView.Reset();
+
 	//first parameter 0 to preserve existing number of buffers, same for third parameter
-	ThrowIfFailed(m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0));
+	ThrowIfFailed(m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, m_allowTearing ? DXGI_PRESENT_ALLOW_TEARING : 0));
 
 	CreateRenderTargetView();
-	CreateDepthStencilView();
+	CreateDepthStencilView(width, height);
 
 	SetRenderTarget();
 
