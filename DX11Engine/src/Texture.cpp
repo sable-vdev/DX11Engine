@@ -66,10 +66,9 @@ Texture::TextureLoaded Texture::LoadFromFile(const std::string& file)
 {
 	TextureLoaded tex{};
 
+	//stbi_set_flip_vertically_on_load(true);
 
 	tex.pixels = stbi_load(file.c_str(), &tex.width, &tex.height, &tex.channels, 4);
-
-	//stbi__vertical_flip(tex.pixels, tex.width, tex.height, tex.channels);
 
 	if (!tex.pixels)
 	{

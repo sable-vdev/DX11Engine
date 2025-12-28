@@ -11,7 +11,7 @@ class Model
 public:
 	Model(const DX11VertexBuffer& vBuffer, const DX11IndexBuffer& iBuffer, const DX11ConstantBuffer<CBDMatrix>& cBuffer,
 		const DX11ConstantBuffer<CBDLight>& cLightBuffer, const DX11ConstantBuffer<CBDCamera>& cCameraBuffer,
-		const DX11VertexShader& vShader, const DX11PixelShader& pShader, const Texture& tex);
+		const DX11VertexShader& vShader, const DX11PixelShader& pShader, const Texture& tex, const Texture& tex2);
 
 	~Model();
 
@@ -32,6 +32,7 @@ private:
 	bool m_padding[8] = { false };
 	DX11PixelShader m_pShader;
 	Texture m_tex;
+	Texture m_tex2;
 
 	Mat4x4 m_modelMatrix = DirectX::XMMatrixIdentity();
 	float4 m_scale = float4(1.0f, 1.0f, 1.0f, 1.0f);

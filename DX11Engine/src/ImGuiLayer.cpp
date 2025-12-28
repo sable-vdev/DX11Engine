@@ -38,9 +38,9 @@ void ImGuiLayer::Render()
 
 	ImGui::Begin("Info");
 	ImGui::Checkbox("Demo Window", &show_demo_window);
-	//ImGui::SameLine();
-	//if(ImGui::Checkbox("Vsync", &Engine::Get().GetVsync()))
-		//Engine::Get().ToggleVsync(Engine::Get().GetVsync());
+	ImGui::SameLine();
+	if(ImGui::Checkbox("Vsync", &Application::Get().GetVsync()))
+		Application::Get().ToggleVsync(Application::Get().GetVsync());
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 	ImGui::End();

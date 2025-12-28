@@ -27,28 +27,6 @@ struct Light
     float3 specular;
 };
 
-void calc(float3 normal, float3 viewDir, out float4 diffambient, out float4 specularLight)
-{
-    float3 lightDir = lightDirection.xyz;
-    
-    float lightIntensitity = saturate(dot(normalize(normal), -lightDir));
-    float4 diffuseLight = diffuseColor * lightIntensitity;
-    
-    float4 ambientLight = ambientColor;
-    
-    specularLight = 0.0f;
-    
-    if(lightIntensitity > 0.0f)
-    {
-        float3 reflectDir = reflect(-lightDir, normalize(normal));
-        float specularIntensitiy = pow(max(dot(normalize(viewDir), reflectDir), 0.0f), specularPower);
-        specularLight = float4(specularIntensitiy * specularColor);
-    }
-    
-    diffambient = diffuseLight + ambientLight;
-}
-
-
 void BlinnPhong(float3 viewDir, float3 normal, out float4 diffuseAmbient, out float4 specular)
 {
     float3 L = -lightDirection.xyz;

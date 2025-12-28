@@ -2,7 +2,7 @@
 
 Application* Application::s_instance = nullptr;
 
-Application::Application(U32 width, U32 height, const std::wstring& windowTitle)
+Application::Application(U32 width, U32 height, const std::wstring& windowTitle, bool vsync) : m_vsync(false)
 {
 	if (s_instance) LOG("Instance of application already there");
 
@@ -71,12 +71,13 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle)
 	
 	std::wstring path = L"..\\DX11Engine\\shaders\\";
 	
-	Texture tex = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\container2.png");
+	Texture tex = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\dirt.png");
+	Texture tex2 = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\texture.png");
 	
-	DX11VertexShader vs = DX11VertexShader(m_context->GetDevice(), path, L"VertexShader.hlsl", VertexLayouts::PositionTexcoordNormal::Desc, VertexLayouts::PositionTexcoordNormal::Count);
-	DX11PixelShader ps = DX11PixelShader(m_context->GetDevice(), path, L"PixelShader.hlsl");
+	DX11VertexShader vs = DX11VertexShader(m_context->GetDevice(), path, L"MultitextureVShader.hlsl", VertexLayouts::PositionTexcoordNormal::Desc, VertexLayouts::PositionTexcoordNormal::Count);
+	DX11PixelShader ps = DX11PixelShader(m_context->GetDevice(), path, L"MultitexturePShader.hlsl");
 
-	model1 = new Model(vb, ib, cb, clb, clCam, vs, ps, tex);
+	model1 = new Model(vb, ib, cb, clb, clCam, vs, ps, tex, tex2);
 }
 
 Application::~Application()
@@ -106,7 +107,7 @@ void Application::Run()
 
 		m_imguiLayer->Render();
 
-		m_context->EndFrame(true);
+		m_context->EndFrame(m_vsync);
 	}
 }
 

@@ -14,7 +14,7 @@
 class Application
 {
 public:
-	Application(U32 width = 1280, U32 height = 720, const std::wstring& windowTitle = L"DX11 Engine");
+	Application(U32 width = 1280, U32 height = 720, const std::wstring& windowTitle = L"DX11 Engine", bool vsync = false);
 	~Application();
 	void Run();
 
@@ -50,6 +50,10 @@ public:
 			return m_window->GetHeight();
 	}
 
+	bool& GetVsync() { return m_vsync; }
+
+	void ToggleVsync(bool toggle) { m_vsync = toggle; }
+
 	static inline Application& Get() { return *s_instance; }
 private:
 	static Application* s_instance;
@@ -59,6 +63,9 @@ private:
 	std::unique_ptr<Camera> m_camera;
 	std::unique_ptr<Timer> m_timer;
 	std::unique_ptr<ImGuiLayer> m_imguiLayer;
+	bool m_vsync = false;
+
+	bool m_padding[7];
 
 	Model* model1;
 	/*
