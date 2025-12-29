@@ -20,7 +20,7 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle,
 
 
 	m_imguiLayer = std::make_unique<ImGuiLayer>();
-
+	/*
 	float data[] = {
 		-0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
 		-0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
@@ -76,6 +76,27 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle,
 	
 	DX11VertexShader vs = DX11VertexShader(m_context->GetDevice(), path, L"MultitextureVShader.hlsl", VertexLayouts::PositionTexcoordNormal::Desc, VertexLayouts::PositionTexcoordNormal::Count);
 	DX11PixelShader ps = DX11PixelShader(m_context->GetDevice(), path, L"MultitexturePShader.hlsl");
+
+	model1 = new Model(vb, ib, cb, clb, clCam, vs, ps, tex, tex2);
+	*/
+	std::vector<float3> vert;
+	std::vector<U32> face;
+	if (ObjLoader::LoadObj("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\teapot.obj", vert, face))
+		LOG("HALLO");
+
+	DX11VertexBuffer vb = DX11VertexBuffer(m_context->GetDevice(), vert.data(), VertexLayouts::Position::Stride, vert.size() * sizeof(float3));
+	DX11IndexBuffer ib = DX11IndexBuffer(m_context->GetDevice(), face.data(), face.size());//sizeof(indices) / sizeof(indices[0]));
+	DX11ConstantBuffer<CBDMatrix> cb = DX11ConstantBuffer<CBDMatrix>(m_context->GetDevice());
+	DX11ConstantBuffer<CBDLight> clb = DX11ConstantBuffer<CBDLight>(m_context->GetDevice());
+	DX11ConstantBuffer<CBDCamera> clCam = DX11ConstantBuffer<CBDCamera>(m_context->GetDevice());
+
+	std::wstring path = L"..\\DX11Engine\\shaders\\";
+
+	Texture tex = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\dirt.png");
+	Texture tex2 = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\texture.png");
+
+	DX11VertexShader vs = DX11VertexShader(m_context->GetDevice(), path, L"SimpleVShader.hlsl", VertexLayouts::Position::Desc, VertexLayouts::Position::Count);
+	DX11PixelShader ps = DX11PixelShader(m_context->GetDevice(), path, L"SimplePShader.hlsl");
 
 	model1 = new Model(vb, ib, cb, clb, clCam, vs, ps, tex, tex2);
 }

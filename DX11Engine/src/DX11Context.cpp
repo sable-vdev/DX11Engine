@@ -6,33 +6,38 @@ DX11Context::DX11Context(HWND hwnd) : m_hwnd(hwnd), m_worldMatrix()
 
 DX11Context::~DX11Context()
 {
+
+
+	if (m_deviceContext)
+	{
+		m_deviceContext->ClearState();
+		m_deviceContext->Flush();
+	}
+
 	m_renderTargetView.Reset();
 	m_depthStencilState.Reset();
 	m_depthStencilView.Reset();
 	m_rasterizerState.Reset();
 	m_swapChain.Reset();
 
-	if (m_deviceContext)
-	{
-		m_deviceContext->ClearState();
-		m_deviceContext->Flush();
-		m_deviceContext.Reset();
-	}
-	
-	m_device.Reset();
+	m_deviceContext.Reset();
 
 #ifndef NDEBUG
 	if (m_device)
 	{
-		ComPtr<ID3D11Debug> debug;
-		if (!ThrowIfFailed(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug))))
+		ComPtr<ID3D11InfoQueue> infoQue;
+		if (SUCCEEDED(m_device.As(&infoQue)))
 		{
-			debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL);
-			debug.Reset();
+			infoQue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, FALSE);
+			infoQue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, FALSE);
+			infoQue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_WARNING, FALSE);
+
+			infoQue->ClearStoredMessages();
 		}
 	}
 #endif //!NDEBUG
 
+	m_device.Reset();
 }
 
 void DX11Context::Init()
@@ -196,6 +201,9 @@ void DX11Context::CreateDepthStencilView(U32 width, U32 height)
 	ThrowIfFailed(m_device->CreateDepthStencilView(depthStencil.Get(), &dsvDesc, m_depthStencilView.GetAddressOf()));
 
 	SetRenderTarget();
+
+	if(depthStencil)
+		depthStencil.Reset();
 }
 
 void DX11Context::CreateRasterizerState()
@@ -262,6 +270,7 @@ void DX11Context::OnResize(U32 width, U32 height)
 	m_deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 
 	m_renderTargetView.Reset();
+	m_depthStencilView.Reset();
 
 	//first parameter 0 to preserve existing number of buffers, same for third parameter
 	ThrowIfFailed(m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, m_allowTearing ? DXGI_PRESENT_ALLOW_TEARING : 0));

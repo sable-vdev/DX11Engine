@@ -10,6 +10,7 @@
 #include "Timer.hpp"
 #include "Model.hpp"
 #include "ImGuiLayer.hpp"
+#include "ObjLoader.hpp"
 
 class Application
 {

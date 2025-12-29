@@ -113,7 +113,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui_lib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui_lib\;%(AdditionalIncludeDirectories);C:\Dev\DX11Engine\tinyobj;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,7 +131,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui_lib\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui_lib\;%(AdditionalIncludeDirectories);C:\Dev\DX11Engine\tinyobj;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ObjLoader.cpp" />
     <ClCompile Include="src\LightModel.cpp" />
     <ClCompile Include="src\ImGuiLayer.cpp" />
     <ClCompile Include="src\Imgui\imgui_impl_dx11.cpp" />
@@ -157,6 +158,7 @@
     <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ObjLoader.hpp" />
     <ClInclude Include="src\LightModel.hpp" />
     <ClInclude Include="src\ImGuiLayer.hpp" />
     <ClInclude Include="src\Imgui\imgui_impl_dx11.h" />
