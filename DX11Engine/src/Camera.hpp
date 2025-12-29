@@ -30,9 +30,13 @@ private:
 
 	float4 m_position = float4(0.0f, 0.0f, -5.0f, 0.0f);
 	float4 m_rotation;
+	float3 m_cameraRight = float3(1.0f, 0.0f, 0.0f);
+	float3 m_cameraFront = float3(0.0f, 0.0f, -1.0f);
+	float2 m_prevMousePos = float2(0.0f, 0.0f);
 	float m_FOV = DirectX::XM_PIDIV4;
 	float m_aspect = 16.0f / 9.0f;
 	float m_nearZ = 0.1f;
 	float m_farZ = 1000.0f;
+	bool m_mouseFirst = true;
 };
 

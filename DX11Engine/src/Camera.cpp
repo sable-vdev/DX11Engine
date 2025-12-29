@@ -54,10 +54,22 @@ void Camera::Update(float dt)
 		m_position.y -= 15.0f * dt;
 	}
 
+	float2 mousePos = Input::GetMousePos();
+
+	if (Input::GetMouse(KeyCode::Right))
+	{
+		if (m_mouseFirst)
+		{
+			m_prevMousePos = mousePos;
+			m_mouseFirst = false;
+		}
+	}
+
 	Vec4 upV = DirectX::XMLoadFloat3(&s_up);
 	Vec4 positionV = DirectX::XMLoadFloat4(&m_position);
 	Vec4 lookAtV = DirectX::XMLoadFloat3(&s_lookAt);
 
+	float sensitivity = 0.0f;
 	float pitch, yaw, roll;
 	
 	pitch = m_rotation.x * RADIANS;
