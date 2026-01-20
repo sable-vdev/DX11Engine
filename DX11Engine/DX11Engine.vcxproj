@@ -113,13 +113,14 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui_lib\;%(AdditionalIncludeDirectories);C:\Dev\DX11Engine\tinyobj;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui_lib\;%(AdditionalIncludeDirectories);C:\Dev\DX11Engine\assimp/include;</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Dev\DX11Engine\imgui_lib\bin\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);assimp-vc143-mtd.lib;zlibstaticd.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Dev\DX11Engine\assimp\build\lib\Debug;C:\Dev\DX11Engine\imgui_lib\bin\x64\Debug;%(AdditionalLibraryDirectories);C:\Dev\DX11Engine\assimp\build\contrib\zlib\Debug;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,6 +142,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\RendererQueue.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\ObjectLoader.cpp" />
     <ClCompile Include="src\ObjLoader.cpp" />
     <ClCompile Include="src\LightModel.cpp" />
     <ClCompile Include="src\ImGuiLayer.cpp" />
@@ -158,6 +162,9 @@
     <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\RendererQueue.hpp" />
+    <ClInclude Include="src\Mesh.hpp" />
+    <ClInclude Include="src\ObjectLoader.hpp" />
     <ClInclude Include="src\ObjLoader.hpp" />
     <ClInclude Include="src\LightModel.hpp" />
     <ClInclude Include="src\ImGuiLayer.hpp" />

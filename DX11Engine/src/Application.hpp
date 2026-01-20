@@ -10,7 +10,7 @@
 #include "Timer.hpp"
 #include "Model.hpp"
 #include "ImGuiLayer.hpp"
-#include "ObjLoader.hpp"
+#include "ObjectLoader.hpp"
 
 class Application
 {
@@ -64,11 +64,10 @@ private:
 	std::unique_ptr<Camera> m_camera;
 	std::unique_ptr<Timer> m_timer;
 	std::unique_ptr<ImGuiLayer> m_imguiLayer;
+	std::vector<Model> m_models;
 	bool m_vsync = false;
 
 	bool m_padding[7];
-
-	Model* model1;
 	/*
 	DX11VertexBuffer* m_vBuffer;
 	DX11IndexBuffer* m_iBuffer;

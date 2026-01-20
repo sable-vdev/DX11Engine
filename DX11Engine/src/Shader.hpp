@@ -58,12 +58,12 @@ namespace VertexLayouts
 		static U32 Stride = 32;
 	}
 
-	namespace PositionTexcoordNormal
+	namespace PositionNormalTexcoord
 	{
 		static D3D11_INPUT_ELEMENT_DESC Desc[] = {
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 
 		static U32 Count = 3;
@@ -78,8 +78,9 @@ class DX11VertexShader
 
 	
 public:
+	DX11VertexShader() = default;
 	DX11VertexShader(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName, D3D11_INPUT_ELEMENT_DESC* layout, U32 numElements);
-	void Bind(ID3D11DeviceContext* deviceContext);
+	void Bind(ID3D11DeviceContext* deviceContext) const;
 
 	//ID3D11VertexShader* GetShader() const { return m_vertexShader.Get(); }
 	//ID3D11InputLayout* GetLayout() const { return m_inputLayout.Get(); }
@@ -97,8 +98,9 @@ class DX11PixelShader
 	template<typename T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
+	DX11PixelShader() = default;
 	DX11PixelShader(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName);
-	void Bind(ID3D11DeviceContext* deviceContext);
+	void Bind(ID3D11DeviceContext* deviceContext) const;
 	//ID3D11PixelShader* GetShader() const { return m_pixelShader.Get(); }
 private:
 	void Create(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName);

@@ -13,8 +13,6 @@ class DX11VertexBuffer
 
 public:
 	DX11VertexBuffer(ID3D11Device* device, const void* data, U32 stride, U32 size, D3D11_USAGE usage = D3D11_USAGE::D3D11_USAGE_DEFAULT);
-	~DX11VertexBuffer() { m_buffer.Reset(); m_buffer = nullptr; };
-
 	/*
 	* Binds the buffer
 	*/
@@ -33,7 +31,6 @@ class DX11IndexBuffer
 
 public:
 	DX11IndexBuffer(ID3D11Device* device, const void* data, U32 count, D3D11_USAGE usage = D3D11_USAGE::D3D11_USAGE_DEFAULT);
-	~DX11IndexBuffer() { m_buffer.Reset(); m_buffer = nullptr; };
 
 	void Bind(ID3D11DeviceContext* context) const;
 	void DrawIndexed(ID3D11DeviceContext* context) const;
@@ -61,7 +58,6 @@ public:
 
 		ThrowIfFailed(device->CreateBuffer(&cbDesc, nullptr, &m_buffer));
 	}
-	~DX11ConstantBuffer() { m_buffer.Reset(); m_buffer = nullptr; };
 
 	/*
 	* Binds the buffer

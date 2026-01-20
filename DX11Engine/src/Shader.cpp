@@ -46,7 +46,7 @@ void DX11VertexShader::Create(ID3D11Device* device, const std::wstring& shaderPa
 	ThrowIfFailed(device->CreateInputLayout(layout, numElements, m_vertexBuffer->GetBufferPointer(), m_vertexBuffer->GetBufferSize(), m_inputLayout.GetAddressOf()));
 }
 
-void DX11VertexShader::Bind(ID3D11DeviceContext* deviceContext)
+void DX11VertexShader::Bind(ID3D11DeviceContext* deviceContext) const
 {
 	if (deviceContext)
 	{
@@ -61,7 +61,7 @@ DX11PixelShader::DX11PixelShader(ID3D11Device* device, const std::wstring& shade
 	Create(device, shaderPath, shaderName);
 }
 
-void DX11PixelShader::Bind(ID3D11DeviceContext* deviceContext)
+void DX11PixelShader::Bind(ID3D11DeviceContext* deviceContext) const
 {
 	if (deviceContext)
 	{

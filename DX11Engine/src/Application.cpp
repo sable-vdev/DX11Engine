@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include "RendererQueue.hpp"
 
 Application* Application::s_instance = nullptr;
 
@@ -20,85 +21,9 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle,
 
 
 	m_imguiLayer = std::make_unique<ImGuiLayer>();
-	/*
-	float data[] = {
-		-0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-		
-		0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f,
-		0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f,
-		-0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,
-		-0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f,
 
-		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f,
-
-		0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-		0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f,
-		0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f
-	};
-
-	U32 indices[] =
-	{
-		0,  1,  2,   0,  2,  3,
-		4,  5,  6,   4,  6,  7,
-		8,  9, 10,   8, 10, 11,
-		12, 13, 14,  12, 14, 15,
-		16, 17, 18,  16, 18, 19,
-		20, 21, 22,  20, 22, 23 
-	};
-
-	DX11VertexBuffer vb = DX11VertexBuffer(m_context->GetDevice(), data, VertexLayouts::PositionTexcoordNormal::Stride, sizeof(data));
-	DX11IndexBuffer ib = DX11IndexBuffer(m_context->GetDevice(), indices, sizeof(indices) / sizeof(indices[0]));
-	DX11ConstantBuffer<CBDMatrix> cb = DX11ConstantBuffer<CBDMatrix>(m_context->GetDevice());
-	DX11ConstantBuffer<CBDLight> clb = DX11ConstantBuffer<CBDLight>(m_context->GetDevice());
-	DX11ConstantBuffer<CBDCamera> clCam = DX11ConstantBuffer<CBDCamera>(m_context->GetDevice());
-	
-	std::wstring path = L"..\\DX11Engine\\shaders\\";
-	
-	Texture tex = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\dirt.png");
-	Texture tex2 = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\texture.png");
-	
-	DX11VertexShader vs = DX11VertexShader(m_context->GetDevice(), path, L"MultitextureVShader.hlsl", VertexLayouts::PositionTexcoordNormal::Desc, VertexLayouts::PositionTexcoordNormal::Count);
-	DX11PixelShader ps = DX11PixelShader(m_context->GetDevice(), path, L"MultitexturePShader.hlsl");
-
-	model1 = new Model(vb, ib, cb, clb, clCam, vs, ps, tex, tex2);
-	*/
-	std::vector<float3> vert;
-	std::vector<U32> face;
-	if (ObjLoader::LoadObj("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\teapot.obj", vert, face))
-		LOG("HALLO");
-
-	DX11VertexBuffer vb = DX11VertexBuffer(m_context->GetDevice(), vert.data(), VertexLayouts::Position::Stride, vert.size() * sizeof(float3));
-	DX11IndexBuffer ib = DX11IndexBuffer(m_context->GetDevice(), face.data(), face.size());//sizeof(indices) / sizeof(indices[0]));
-	DX11ConstantBuffer<CBDMatrix> cb = DX11ConstantBuffer<CBDMatrix>(m_context->GetDevice());
-	DX11ConstantBuffer<CBDLight> clb = DX11ConstantBuffer<CBDLight>(m_context->GetDevice());
-	DX11ConstantBuffer<CBDCamera> clCam = DX11ConstantBuffer<CBDCamera>(m_context->GetDevice());
-
-	std::wstring path = L"..\\DX11Engine\\shaders\\";
-
-	Texture tex = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\dirt.png");
-	Texture tex2 = Texture(m_context->GetDevice(), "C:\\Dev\\DX11Engine\\DX11Engine\\resources\\texture.png");
-
-	DX11VertexShader vs = DX11VertexShader(m_context->GetDevice(), path, L"SimpleVShader.hlsl", VertexLayouts::Position::Desc, VertexLayouts::Position::Count);
-	DX11PixelShader ps = DX11PixelShader(m_context->GetDevice(), path, L"SimplePShader.hlsl");
-
-	model1 = new Model(vb, ib, cb, clb, clCam, vs, ps, tex, tex2);
+	m_models.push_back(*ObjectLoader::LoadObject("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\headMesh.obj"));
+	m_models.push_back(*ObjectLoader::LoadObject("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\teapot.obj"));
 }
 
 Application::~Application()
@@ -113,20 +38,23 @@ void Application::Run()
 		m_timer->Tick();
 
 		m_timer->GetFramesPerSecond();
-
+		
 		if (!m_window->Run())
 			break;
 
 		m_camera->Update(m_timer->GetDeltaTime());
 
-		model1->Update(m_timer->GetDeltaTime());
+		RendererQueue::AddContext(m_context->GetDeviceContext());
 
 		m_context->BeginFrame();
 
-		model1->Render(m_context->GetDeviceContext());
+		for (Model& model : m_models)
+			RendererQueue::Enqueue(model);
 
+		RendererQueue::Flush();
 
 		m_imguiLayer->Render();
+
 
 		m_context->EndFrame(m_vsync);
 	}
