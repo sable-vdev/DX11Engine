@@ -15,6 +15,7 @@ std::unique_ptr<Model> ObjectLoader::LoadObject(const char* filename)
 std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
 {
     auto startTime = std::chrono::system_clock::now();
+
     Assimp::Importer importer;
 
     const aiScene* scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
@@ -44,9 +45,6 @@ std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
 
     auto endTime = std::chrono::system_clock::now();
     std::string timePassed = std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count()) + " ms";
-    LOG(timePassed);
-
-    timePassed = std::to_string(std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime).count()) + " s";
     LOG(timePassed);
 
     return model;
@@ -111,6 +109,11 @@ Mesh ObjectLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     /*
      *  TODO: MATERIAL
     */
+
+    if (mesh->mMaterialIndex >= 0)
+    {
+
+    }
 
     return Mesh(vertices, indices, Application::Get().GetDevice());
 }

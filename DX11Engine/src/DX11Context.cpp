@@ -56,7 +56,7 @@ void DX11Context::Init()
 
 	SetRenderTarget();
 
-	m_worldMatrix = DirectX::XMMatrixIdentity();
+	m_worldMatrix = DX::XMMatrixIdentity();
 }
 
 void DX11Context::CreateDeviceAndSwapChain(HWND hwnd)

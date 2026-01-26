@@ -24,31 +24,41 @@ public:
 	ID3D11Device* GetDevice() const 
 	{ 
 		if (m_context) 
-			return m_context->GetDevice(); 
+			return m_context->GetDevice();
+
+		return nullptr;
 	}
 
 	ID3D11DeviceContext* GetContext() const
 	{
 		if (m_context)
 			return m_context->GetDeviceContext();
+
+		return nullptr;
 	}
 
 	HWND GetHWND() const
 	{
 		if (m_window)
 			return m_window->GetHWND();
+
+		return nullptr;
 	}
 
 	U32 GetWidth() const
 	{
 		if (m_window)
 			return m_window->GetWidth();
+
+		return 0;
 	}
 
 	U32 GetHeight() const
 	{
 		if (m_window)
 			return m_window->GetHeight();
+
+		return 0;
 	}
 
 	bool& GetVsync() { return m_vsync; }

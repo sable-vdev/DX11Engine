@@ -21,7 +21,7 @@ public:
 	inline float4 GetPosition() const { return m_position; }
 	inline float4 GetRotation() const { return m_rotation; }
 private:
-	static float3 s_up;
+	static Vec4 s_up;
 	static float3 s_lookAt;
 	static Mat4x4 s_viewMatrix;
 	static Mat4x4 s_projectionMatrix;
@@ -30,13 +30,14 @@ private:
 
 	float4 m_position = float4(0.0f, 0.0f, -5.0f, 0.0f);
 	float4 m_rotation;
-	float3 m_cameraRight = float3(1.0f, 0.0f, 0.0f);
-	float3 m_cameraFront = float3(0.0f, 0.0f, -1.0f);
+	Vec4 m_cameraRight = Vec4{ 1.0f, 0.0f, 0.0f, 0.0f };
+	Vec4 m_cameraFront = Vec4{ 0.0f, 0.0f, -1.0f };
 	float2 m_prevMousePos = float2(0.0f, 0.0f);
-	float m_FOV = DirectX::XM_PIDIV4;
+	float m_FOV = DX::XM_PIDIV4;
 	float m_aspect = 16.0f / 9.0f;
 	float m_nearZ = 0.1f;
 	float m_farZ = 1000.0f;
+	float m_cameraSpeed = 15.0f;
 	bool m_mouseFirst = true;
 };
 

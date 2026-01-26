@@ -1,6 +1,8 @@
 #pragma once
 #include <DirectXMath.h>
 
+namespace DX = DirectX;
+
 using I8 = signed char;
 using I16 = short;
 using I32 = int;
@@ -10,11 +12,11 @@ using U16 = unsigned short;
 using U32 = unsigned int;
 using U64 = unsigned long long;
 
-using Mat3x3 = DirectX::XMFLOAT3X3;
-using Mat4x4 = DirectX::XMMATRIX;
+using Mat3x3 = DX::XMFLOAT3X3;
+using Mat4x4 = DX::XMMATRIX;
 
-using float2 = DirectX::XMFLOAT2;
-using float3 = DirectX::XMFLOAT3;
-using float4 = DirectX::XMFLOAT4;
+using float2 = DX::XMFLOAT2;
+using float3 = DX::XMFLOAT3;
+using float4 = DX::XMFLOAT4;
 
-using Vec4 = DirectX::XMVECTOR;
+using Vec4 = DX::XMVECTOR;

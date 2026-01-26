@@ -3,7 +3,7 @@
 
 Mesh::Mesh(const std::vector<Vertex>& verts, const std::vector<U32>& indis, ID3D11Device* device)
 	: m_vertexBuffer(device, verts.data(), sizeof(Vertex), U32(verts.size() * sizeof(Vertex))),
-	m_indexBuffer(device, indis.data(), indis.size()), m_cBuffer(device)
+	m_indexBuffer(device, indis.data(), static_cast<U32>(indis.size())), m_cBuffer(device)
 {
 	std::wstring path = L"..\\DX11Engine\\shaders\\";
 
@@ -20,12 +20,12 @@ void Mesh::Draw(ID3D11DeviceContext* context) const
 
 	m_pixelShader.Bind(context);
 
-	DirectX::XMMATRIX mat = DirectX::XMMatrixIdentity();
+	DX::XMMATRIX mat = DX::XMMatrixIdentity();
 
 	CBDMatrix data{};
-	data.normal = DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, mat));
-	data.model = DirectX::XMMatrixTranspose(mat);
-	data.mvp = DirectX::XMMatrixTranspose(mat * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
+	data.normal = DX::XMMatrixTranspose(DX::XMMatrixInverse(nullptr, mat));
+	data.model = DX::XMMatrixTranspose(mat);
+	data.mvp = DX::XMMatrixTranspose(mat * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
 
 	m_cBuffer.BindVS(context, data);
 
