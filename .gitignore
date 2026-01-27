@@ -49,3 +49,10 @@
 
 *.iobj
 *.ipdb
+
+*.idea
+
+*.exp
+
+Debug/*
+bin/*
