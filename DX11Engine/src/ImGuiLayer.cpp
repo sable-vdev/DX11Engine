@@ -24,12 +24,24 @@ ImGuiLayer::~ImGuiLayer()
 	ImGui::DestroyContext();
 }
 
-void ImGuiLayer::Render()
+void ImGuiLayer::Begin()
 {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+}
 
+void ImGuiLayer::ModelInfo(Model& model)
+{
+	ImGui::Begin(model.name.c_str());
+	ImGui::DragFloat3("Position", &model.GetPosition().x);
+	ImGui::DragFloat3("Rotation", &model.GetRotation().x);
+	ImGui::DragFloat3("Scale", &model.GetScale().x);
+	ImGui::End();
+}
+
+void ImGuiLayer::Render()
+{
 	ImGuiIO& io = ImGui::GetIO();
 	static bool show_demo_window = true;
 
@@ -47,12 +59,10 @@ void ImGuiLayer::Render()
 
 	io.DisplaySize = ImVec2(static_cast<float>(Application::Get().GetWidth()),
 		static_cast<float>(Application::Get().GetHeight()));
+}
 
+void ImGuiLayer::End()
+{
 	ImGui::Render();
-
-	//auto deviceContext = Engine::Get().GetD3DContext();
-	//auto renderTarget = Engine::Get().GetRenderTargetView();
-	//deviceContext->OMSetRenderTargets(1, &renderTarget, nullptr);
-
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }

@@ -28,6 +28,8 @@ public:
 
 	void OnResize(U32 width, U32 height);
 
+	void ToggleDepth(bool enabled = true);
+
 	ID3D11Device* GetDevice() const { return m_device.Get(); }
 	ID3D11DeviceContext* GetDeviceContext() const { return m_deviceContext.Get(); }
 
@@ -45,6 +47,7 @@ private:
 	ComPtr<IDXGISwapChain4> m_swapChain;
 	ComPtr<ID3D11RenderTargetView> m_renderTargetView;
 	ComPtr<ID3D11DepthStencilState> m_depthStencilState;
+	ComPtr<ID3D11DepthStencilState> m_depthDisabledStencilState;
 	ComPtr<ID3D11DepthStencilView> m_depthStencilView;
 	ComPtr<ID3D11RasterizerState2> m_rasterizerState;
 	Mat4x4 m_worldMatrix;

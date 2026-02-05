@@ -142,6 +142,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Frustum.cpp" />
+    <ClCompile Include="src\Sprite.cpp" />
     <ClCompile Include="src\RendererQueue.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\ObjectLoader.cpp" />
@@ -156,12 +158,15 @@
     <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\DX11Context.cpp" />
-    <ClCompile Include="DX11Engine.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Window.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Frustum.hpp" />
+    <ClInclude Include="src\Sprite.hpp" />
     <ClInclude Include="src\RendererQueue.hpp" />
     <ClInclude Include="src\Mesh.hpp" />
     <ClInclude Include="src\ObjectLoader.hpp" />
@@ -184,6 +189,8 @@
     <ClInclude Include="src\Timer.hpp" />
     <ClInclude Include="src\Window.hpp" />
     <ClInclude Include="src\Texture.hpp" />
+    <ClInclude Include="src\containers\TSQueue.hpp" />
+    <ClInclude Include="src\TextureManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\imgui_lib\imgui_lib.vcxproj">

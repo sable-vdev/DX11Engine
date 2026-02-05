@@ -75,8 +75,6 @@ class DX11VertexShader
 {
 	template<typename T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
-
-	
 public:
 	DX11VertexShader() = default;
 	DX11VertexShader(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName, D3D11_INPUT_ELEMENT_DESC* layout, U32 numElements);

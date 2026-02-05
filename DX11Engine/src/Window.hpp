@@ -17,6 +17,7 @@ public:
 	inline HWND GetHWND() { return m_hwnd; }
 	inline U32 GetWidth() const { return m_width; }
 	inline U32 GetHeight() const { return m_height; }
+
 	bool Run();
 
 	static inline LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

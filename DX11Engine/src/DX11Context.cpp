@@ -70,9 +70,9 @@ void DX11Context::CreateDeviceAndSwapChain(HWND hwnd)
 	ComPtr<IDXGIFactory7> factory;
 	ThrowIfFailed(CreateDXGIFactory2(0, IID_PPV_ARGS(&factory)));
 
-	BOOL allow = FALSE;
+	I32 allow = 0;
 	ThrowIfFailed(factory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allow, sizeof(allow)));
-	m_allowTearing = allow == TRUE;
+	m_allowTearing = allow == 1;
 
 	ComPtr<IDXGIAdapter4> adapter;
 	ThrowIfFailed(factory->EnumAdapterByGpuPreference(0, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter)));
@@ -165,11 +165,12 @@ void DX11Context::CreateDepthStencilView(U32 width, U32 height)
 
 	ThrowIfFailed(m_device->CreateTexture2D(&texDesc, nullptr, depthStencil.GetAddressOf()));
 
+	//first depth stencil state description for z buffer enabled drawing
 	D3D11_DEPTH_STENCIL_DESC depthDesc{};
 	//depth test params
 	depthDesc.DepthEnable = true;
 	depthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	depthDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	depthDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
 	//stencil test params
 	depthDesc.StencilEnable = true;
@@ -193,6 +194,11 @@ void DX11Context::CreateDepthStencilView(U32 width, U32 height)
 	//set state
 	m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
 
+	//second depth stencil desc for z buffer disabled drawing
+	depthDesc.DepthEnable = false;
+
+	ThrowIfFailed(m_device->CreateDepthStencilState(&depthDesc, &m_depthDisabledStencilState));
+
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
@@ -211,7 +217,7 @@ void DX11Context::CreateRasterizerState()
 	D3D11_RASTERIZER_DESC2 rasDesc{};
 	rasDesc.FillMode = D3D11_FILL_SOLID;
 	rasDesc.CullMode = D3D11_CULL_NONE;
-	rasDesc.FrontCounterClockwise = TRUE;
+	rasDesc.FrontCounterClockwise = FALSE;
 	rasDesc.DepthBias = 0;
 	rasDesc.DepthBiasClamp = 0.0f;
 	rasDesc.SlopeScaledDepthBias = 0.0f;
@@ -249,7 +255,7 @@ void DX11Context::BeginFrame()
 	m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
 	m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	SetRenderTarget();
-	m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
+	m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 0);
 	m_deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_deviceContext->RSSetState(m_rasterizerState.Get());
 }
@@ -281,4 +287,12 @@ void DX11Context::OnResize(U32 width, U32 height)
 	SetRenderTarget();
 
 	SetViewport(width, height);
+}
+
+void DX11Context::ToggleDepth(bool enabled)
+{
+	if(enabled)
+		m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
+	else
+		m_deviceContext->OMSetDepthStencilState(m_depthDisabledStencilState.Get(), 0);
 }

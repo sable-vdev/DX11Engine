@@ -5,7 +5,8 @@ Application* Application::s_instance = nullptr;
 
 Application::Application(U32 width, U32 height, const std::wstring& windowTitle, bool vsync) : m_vsync(false)
 {
-	if (s_instance) LOG("Instance of application already there");
+	if (s_instance) 
+		LOG("Instance of application already there");
 
 	s_instance = this;
 
@@ -22,19 +23,20 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle,
 
 	m_imguiLayer = std::make_unique<ImGuiLayer>();
 
-	m_models.push_back(*ObjectLoader::LoadObject("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\headMesh.obj"));
-	m_models.push_back(*ObjectLoader::LoadObject("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\teapot.obj"));
+	ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", m_modelQueue);
+	//ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\teapot.obj", m_modelQueue);
+	//sprite = new Sprite("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\texture.png");
 }
 
 Application::~Application()
 {
+	delete sprite;
 }
 
 void Application::Run()
 {
 	while (true)
 	{
-
 		m_timer->Tick();
 
 		m_timer->GetFramesPerSecond();
@@ -44,17 +46,35 @@ void Application::Run()
 
 		m_camera->Update(m_timer->GetDeltaTime());
 
+
+		std::unique_ptr<Model> model;
+		while (m_modelQueue.TryPop(model))
+		{
+			m_models.push_back(std::shared_ptr<Model>(std::move(model)));
+		}
+
+		for (const auto& model : m_models)
+			model->Update(m_timer->GetDeltaTime());
+
 		RendererQueue::AddContext(m_context->GetDeviceContext());
 
 		m_context->BeginFrame();
 
-		for (Model& model : m_models)
+		for (const auto& model : m_models)
+		{
 			RendererQueue::Enqueue(model);
+		}
 
 		RendererQueue::Flush();
+		
+		m_imguiLayer->Begin();
+
+		if (m_models.size() > 0)
+			m_imguiLayer->ModelInfo(*m_models[0]);
 
 		m_imguiLayer->Render();
 
+		m_imguiLayer->End();
 
 		m_context->EndFrame(m_vsync);
 	}

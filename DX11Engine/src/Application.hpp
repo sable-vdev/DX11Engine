@@ -11,6 +11,8 @@
 #include "Model.hpp"
 #include "ImGuiLayer.hpp"
 #include "ObjectLoader.hpp"
+#include "containers/TSQueue.hpp"
+#include "Sprite.hpp"
 
 class Application
 {
@@ -74,7 +76,11 @@ private:
 	std::unique_ptr<Camera> m_camera;
 	std::unique_ptr<Timer> m_timer;
 	std::unique_ptr<ImGuiLayer> m_imguiLayer;
-	std::vector<Model> m_models;
+	std::vector<std::shared_ptr<Model>> m_models;
+	TSQueue<std::unique_ptr<Model>> m_modelQueue;
+
+	Sprite* sprite;
+
 	bool m_vsync = false;
 
 	bool m_padding[7];

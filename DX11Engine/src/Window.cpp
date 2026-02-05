@@ -43,6 +43,7 @@ Window::Window(U32 width, U32 height, const std::wstring& windowTitle) : m_windo
 		ShowWindow(m_hwnd, SW_MAXIMIZE);
 		SetForegroundWindow(m_hwnd);
 		SetFocus(m_hwnd);
+		SetWindowText(m_hwnd, m_windowTitle.c_str());
 	}
 }
 

@@ -24,10 +24,6 @@ public:
 public:
 	DX11VertexBuffer m_vertexBuffer;
 	DX11IndexBuffer m_indexBuffer;
-	DX11ConstantBuffer<CBDMatrix> m_cBuffer;
-
-	DX11VertexShader m_vertexShader;
-	DX11PixelShader m_pixelShader;
 
 	U32 materialId = 0;
 };

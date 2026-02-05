@@ -10,7 +10,7 @@ cbuffer VS_CONST_BUFFER : register(b0)
     matrix normal;
     matrix model;
     matrix mvp;
-}
+};
 
 struct VS_OUTPUT
 {

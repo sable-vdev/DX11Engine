@@ -6,6 +6,17 @@
 #include "EngineTypes.hpp"
 #include "Logger.hpp"
 
+struct ModelTexture
+{
+	ModelTexture() = default;
+
+	U32 diffuse = -1;
+	U32 specular = -1;
+	U32 normal = -1;
+
+	float shininess = 32.0f;
+};
+
 //For now we only accept textures(pics) with a standardized size of 256x256
 
 class Texture

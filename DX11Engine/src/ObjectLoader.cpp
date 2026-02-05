@@ -1,6 +1,12 @@
 #include "ObjectLoader.hpp"
 #include "Application.hpp"
+#include "TextureManager.hpp"
+
 #include <chrono>
+#include <thread>
+#include <future>
+#include <memory>
+
 
 std::unique_ptr<Model> ObjectLoader::LoadObject(std::string filename)
 {
@@ -10,6 +16,16 @@ std::unique_ptr<Model> ObjectLoader::LoadObject(std::string filename)
 std::unique_ptr<Model> ObjectLoader::LoadObject(const char* filename)
 {
     return LoadObjectImple(filename);
+}
+
+void ObjectLoader::LoadObjectAsync(const char* filename, TSQueue<std::unique_ptr<Model>>& models)
+{
+    std::thread([filename, &models]() {
+        auto model = LoadObjectImple(filename);
+
+        if(model)
+            models.Push(std::move(model));
+        }).detach();
 }
 
 std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
@@ -29,11 +45,11 @@ std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
         return nullptr;
     }
 
-    std::unique_ptr<Model> model = std::make_unique<Model>();
+    std::unique_ptr<Model> model = std::make_unique<Model>(Application::Get().GetDevice());
     std::string name = std::filesystem::path(filename).filename().stem().string();
     model->name = name;
 
-    ProcessNode(*model, scene->mRootNode, scene);
+    ProcessNode(*model, scene->mRootNode, scene, std::filesystem::path(filename).parent_path().string());
 
     if (model->meshes.empty())
     {
@@ -50,21 +66,22 @@ std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
     return model;
 }
 
-void ObjectLoader::ProcessNode(Model& model, aiNode* node, const aiScene* scene)
+void ObjectLoader::ProcessNode(Model& model, aiNode* node, const aiScene* scene, std::string directory)
 {
     for (U32 i{}; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        model.meshes.push_back(ProcessMesh(mesh, scene));
+        //model.meshes.push_back(
+        ProcessMesh(model, mesh, scene, directory);
     }
 
     for (U32 i{}; i < node->mNumChildren; i++)
     {
-        ProcessNode(model, node->mChildren[i], scene);
+        ProcessNode(model, node->mChildren[i], scene, directory);
     }
 }
 
-Mesh ObjectLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+void ObjectLoader::ProcessMesh(Model& model, aiMesh* mesh, const aiScene* scene, std::string& directory)
 {
     std::vector<Vertex> vertices;
     vertices.reserve(mesh->mNumVertices);
@@ -90,10 +107,10 @@ Mesh ObjectLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         if (mesh->mTextureCoords[0])
         {
             vert.texcoord.x = static_cast<float>(mesh->mTextureCoords[0][i].x);
-            vert.texcoord.y = static_cast<float>(mesh->mTextureCoords[0][i].y);
+            vert.texcoord.y = 1.0f - static_cast<float>(mesh->mTextureCoords[0][i].y);
         }
 
-        vertices.push_back(vert);
+        vertices.push_back(std::move(vert));
     }
 
     for (U32 i{}; i < mesh->mNumFaces; i++)
@@ -102,18 +119,23 @@ Mesh ObjectLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
         for (U32 j{}; j < face.mNumIndices; j++)
         {
-            indices.push_back(face.mIndices[j]);
+            indices.push_back(std::move(face.mIndices[j]));
         }
     }
 
-    /*
-     *  TODO: MATERIAL
-    */
-
     if (mesh->mMaterialIndex >= 0)
     {
+        aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
+    
+        aiString str;
+        mat->GetTexture(aiTextureType_DIFFUSE, 0, &str);
 
+        std::string path = directory + "\\" + str.C_Str();
+
+        model.textures->diffuse = TextureManager::Load(path);
     }
 
-    return Mesh(vertices, indices, Application::Get().GetDevice());
+    model.meshes.push_back(Mesh(vertices, indices, Application::Get().GetDevice()));
+
+    //return Mesh(vertices, indices, Application::Get().GetDevice());
 }
