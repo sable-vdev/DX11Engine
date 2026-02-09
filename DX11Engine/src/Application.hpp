@@ -76,7 +76,7 @@ private:
 	std::unique_ptr<Camera> m_camera;
 	std::unique_ptr<Timer> m_timer;
 	std::unique_ptr<ImGuiLayer> m_imguiLayer;
-	std::vector<std::shared_ptr<Model>> m_models;
+	std::vector<std::unique_ptr<Model>> m_models;
 	TSQueue<std::unique_ptr<Model>> m_modelQueue;
 
 	Sprite* sprite;

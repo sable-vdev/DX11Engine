@@ -24,6 +24,7 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle,
 	m_imguiLayer = std::make_unique<ImGuiLayer>();
 
 	ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", m_modelQueue);
+	ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", m_modelQueue);
 	//ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\teapot.obj", m_modelQueue);
 	//sprite = new Sprite("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\texture.png");
 }
@@ -50,7 +51,7 @@ void Application::Run()
 		std::unique_ptr<Model> model;
 		while (m_modelQueue.TryPop(model))
 		{
-			m_models.push_back(std::shared_ptr<Model>(std::move(model)));
+			m_models.push_back(std::move(model));
 		}
 
 		for (const auto& model : m_models)
@@ -62,7 +63,7 @@ void Application::Run()
 
 		for (const auto& model : m_models)
 		{
-			RendererQueue::Enqueue(model);
+			RendererQueue::Enqueue(model.get());
 		}
 
 		RendererQueue::Flush();

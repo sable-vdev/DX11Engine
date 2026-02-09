@@ -2,7 +2,7 @@
 #include "Application.hpp"
 #include "TextureManager.hpp"
 
-Model::Model(ID3D11Device* device) : m_cBuffer(Application::Get().GetDevice()), m_modelMatrix(DX::XMMatrixIdentity())
+Model::Model(ID3D11Device* device) : m_cBuffer(device), m_modelMatrix(DX::XMMatrixIdentity())
 {
 	std::wstring path = L"..\\DX11Engine\\shaders\\";
 	vertexShader = std::make_unique<DX11VertexShader>(device, path, L"SimpleVShader.hlsl", VertexLayouts::PositionNormalTexcoord::Desc, VertexLayouts::PositionNormalTexcoord::Count);

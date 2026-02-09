@@ -10,6 +10,8 @@ public:
 	void Draw(ID3D11DeviceContext* context) const;
 	void Update(float dt);
 
+	void PushToGpu(ID3D11Device* device);
+
 	inline float3& GetPosition() { return m_position; }
 	inline float3& GetRotation() { return m_rotation; }
 	inline float3& GetScale() { return m_scale; }

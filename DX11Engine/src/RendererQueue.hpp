@@ -11,9 +11,9 @@ public:
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 	static void AddContext(const ComPtr<ID3D11DeviceContext>& deviceContext);
-	static void Enqueue(const std::shared_ptr<Model>& model);
+	static void Enqueue(const Model* model);
 	static void Flush();
 private:
 	static ComPtr<ID3D11DeviceContext> s_deviceContext;
-	static std::vector<std::shared_ptr<Model>> s_queue;
+	static std::vector<const Model*> s_queue;
 };

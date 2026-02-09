@@ -25,7 +25,7 @@ Sprite::Sprite(const std::string& filepath)
 	m_vShader = std::make_unique<DX11VertexShader>(Application::Get().GetDevice(), path, L"SimpleSpriteVShader.hlsl", VertexLayouts::PositionTexcoord::Desc, VertexLayouts::PositionTexcoord::Count);
 	m_pShader = std::make_unique<DX11PixelShader>(Application::Get().GetDevice(), path, L"SimpleSpritePShader.hlsl");
 	
-	m_texture = std::make_unique<Texture>(Application::Get().GetDevice(), filepath);
+	m_texture = std::make_unique<Texture>(filepath);
 
 	m_cbdSprite = std::make_unique<DX11ConstantBuffer<CBDSprite>>(Application::Get().GetDevice());
 }

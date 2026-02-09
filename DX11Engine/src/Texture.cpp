@@ -3,42 +3,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-Texture::Texture(ID3D11Device* device, const std::string& file)
+Texture::Texture(const std::string& file)
 {
-	Texture::TextureLoaded tex = LoadFromFile(file);
-
-	D3D11_TEXTURE2D_DESC desc{};
-	desc.Width = tex.width;
-	desc.Height = tex.height;
-	desc.MipLevels = 1;
-	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	desc.CPUAccessFlags = 0;
-	desc.MiscFlags = 0;
-	
-	D3D11_SUBRESOURCE_DATA subData{};
-	subData.pSysMem = tex.pixels;
-	subData.SysMemPitch = static_cast<UINT>(tex.width * 4);
-
-	if (device)
-	{
-		ThrowIfFailed(device->CreateTexture2D(&desc, &subData, &m_texture));
-	}
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
-
-	ThrowIfFailed(device->CreateShaderResourceView(m_texture.Get(), &srvDesc, &m_shaderResourceView));
-
-	stbi_image_free(tex.pixels);
-
-	CreateSampler(device);
+	m_cpuInfo = LoadFromFile(file);
 }
 
 Texture::~Texture()
@@ -62,9 +29,48 @@ void Texture::Bind(ID3D11DeviceContext* deviceContext, U32 slot)
 	}
 }
 
-Texture::TextureLoaded Texture::LoadFromFile(const std::string& file)
+void Texture::UploadToGpu(ID3D11Device* device)
 {
-	TextureLoaded tex{};
+	D3D11_TEXTURE2D_DESC desc{};
+	desc.Width = m_cpuInfo.width;
+	desc.Height = m_cpuInfo.height;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA subData{};
+	subData.pSysMem = m_cpuInfo.pixels;
+	subData.SysMemPitch = static_cast<UINT>(m_cpuInfo.width * 4);
+
+	if (device)
+	{
+		ThrowIfFailed(device->CreateTexture2D(&desc, &subData, &m_texture));
+	}
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	ThrowIfFailed(device->CreateShaderResourceView(m_texture.Get(), &srvDesc, &m_shaderResourceView));
+
+	stbi_image_free(m_cpuInfo.pixels);
+	m_cpuInfo.pixels = nullptr;
+
+	isUploaded = true;
+
+	CreateSampler(device);
+}
+
+Texture::CPUTex Texture::LoadFromFile(const std::string& file)
+{
+	CPUTex tex{};
 
 	//stbi_set_flip_vertically_on_load(true);
 
