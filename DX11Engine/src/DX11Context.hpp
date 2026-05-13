@@ -23,7 +23,7 @@ public:
 
 	void SetViewport(U32 width, U32 height);
 
-	void BeginFrame();
+	void BeginFrame(ID3D11RenderTargetView* rtv);
 	void EndFrame(bool vsnyc = false);
 
 	void OnResize(U32 width, U32 height);
@@ -32,6 +32,9 @@ public:
 
 	ID3D11Device* GetDevice() const { return m_device.Get(); }
 	ID3D11DeviceContext* GetDeviceContext() const { return m_deviceContext.Get(); }
+	ID3D11ShaderResourceView* GetViewportSRV() const { return m_viewportSRV.Get(); }
+	ID3D11RenderTargetView* GetViewportRTV() const { return m_viewportRTV.Get(); }
+	ID3D11RenderTargetView* GetBackbufferRTV() const { return m_backbufferRTV.Get(); }
 
 	Mat4x4 GetWorldMatrix() const { return m_worldMatrix; }
 private:
@@ -40,16 +43,20 @@ private:
 	void CreateDepthStencilView(U32 width, U32 height);
 	void CreateRasterizerState();
 	void SetRenderTarget();
+	void CreateViewportResources(U32 width, U32 height);
 private:
 	HWND m_hwnd;
 	ComPtr<ID3D11Device5> m_device;
 	ComPtr<ID3D11DeviceContext4> m_deviceContext;
 	ComPtr<IDXGISwapChain4> m_swapChain;
-	ComPtr<ID3D11RenderTargetView> m_renderTargetView;
+	ComPtr<ID3D11RenderTargetView> m_backbufferRTV;
 	ComPtr<ID3D11DepthStencilState> m_depthStencilState;
 	ComPtr<ID3D11DepthStencilState> m_depthDisabledStencilState;
 	ComPtr<ID3D11DepthStencilView> m_depthStencilView;
 	ComPtr<ID3D11RasterizerState2> m_rasterizerState;
+	ComPtr<ID3D11Texture2D> m_viewportTexture;
+	ComPtr<ID3D11ShaderResourceView> m_viewportSRV;
+	ComPtr<ID3D11RenderTargetView> m_viewportRTV;
 	Mat4x4 m_worldMatrix;
 	bool m_allowTearing = false;
 };

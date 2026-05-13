@@ -15,13 +15,13 @@ void RendererQueue::Enqueue(const Model* model)
 	s_queue.push_back(model);
 }
 
-void RendererQueue::Flush()
+void RendererQueue::Flush(Scene* scene)
 {
 	assert(s_deviceContext);
 
 	for (const auto& model : s_queue)
 	{
-		model->Draw(s_deviceContext.Get());
+		model->Draw(s_deviceContext.Get(), *scene);
 	}
 
 	s_queue.clear();

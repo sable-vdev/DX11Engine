@@ -4,7 +4,6 @@
 
 #include "Window.hpp"
 #include "DX11Context.hpp"
-#include "Texture.hpp"
 #include "Input.hpp"
 #include "Camera.hpp"
 #include "Timer.hpp"
@@ -13,6 +12,8 @@
 #include "ObjectLoader.hpp"
 #include "containers/TSQueue.hpp"
 #include "Sprite.hpp"
+#include "LightManager.hpp"
+#include "Scene.hpp"
 
 class Application
 {
@@ -35,6 +36,14 @@ public:
 	{
 		if (m_context)
 			return m_context->GetDeviceContext();
+
+		return nullptr;
+	}
+
+	ID3D11ShaderResourceView* GetSRV() const
+	{
+		if (m_context)
+			return m_context->GetViewportSRV();
 
 		return nullptr;
 	}
@@ -63,6 +72,11 @@ public:
 		return 0;
 	}
 
+	Scene GetScene() const
+	{
+		return *m_scene;
+	}
+
 	bool& GetVsync() { return m_vsync; }
 
 	void ToggleVsync(bool toggle) { m_vsync = toggle; }
@@ -78,19 +92,9 @@ private:
 	std::unique_ptr<ImGuiLayer> m_imguiLayer;
 	std::vector<std::unique_ptr<Model>> m_models;
 	TSQueue<std::unique_ptr<Model>> m_modelQueue;
-
-	Sprite* sprite;
+	std::unique_ptr<Scene> m_scene;
+	//std::unique_ptr<LightManager> m_lightManager;
 
 	bool m_vsync = false;
-
-	bool m_padding[7];
-	/*
-	DX11VertexBuffer* m_vBuffer;
-	DX11IndexBuffer* m_iBuffer;
-	DX11ConstantBuffer<CBDMatrix>* m_cBuffer;
-	DX11VertexShader* m_vShader;
-	DX11PixelShader* m_pShader;
-	*/
-	//Texture* tex;
 };
 

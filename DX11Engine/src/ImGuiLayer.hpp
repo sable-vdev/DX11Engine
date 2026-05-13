@@ -14,6 +14,7 @@ public:
 	void Begin();
 
 	void ModelInfo(Model& model);
+	void LightInfo(LightEntity& ent);
 	void Render();
 	void End();
 };

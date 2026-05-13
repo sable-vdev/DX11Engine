@@ -142,13 +142,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Light.cpp" />
+    <ClCompile Include="src\LightManager.cpp" />
     <ClCompile Include="src\Frustum.cpp" />
     <ClCompile Include="src\Sprite.cpp" />
     <ClCompile Include="src\RendererQueue.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\ObjectLoader.cpp" />
-    <ClCompile Include="src\ObjLoader.cpp" />
-    <ClCompile Include="src\LightModel.cpp" />
     <ClCompile Include="src\ImGuiLayer.cpp" />
     <ClCompile Include="src\Imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="src\Imgui\imgui_impl_win32.cpp" />
@@ -165,13 +165,14 @@
     <ClCompile Include="src\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Scene.hpp" />
+    <ClInclude Include="src\Light.hpp" />
+    <ClInclude Include="src\LightManager.hpp" />
     <ClInclude Include="src\Frustum.hpp" />
     <ClInclude Include="src\Sprite.hpp" />
     <ClInclude Include="src\RendererQueue.hpp" />
     <ClInclude Include="src\Mesh.hpp" />
     <ClInclude Include="src\ObjectLoader.hpp" />
-    <ClInclude Include="src\ObjLoader.hpp" />
-    <ClInclude Include="src\LightModel.hpp" />
     <ClInclude Include="src\ImGuiLayer.hpp" />
     <ClInclude Include="src\Imgui\imgui_impl_dx11.h" />
     <ClInclude Include="src\Imgui\imgui_impl_win32.h" />

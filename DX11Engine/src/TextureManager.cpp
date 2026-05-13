@@ -1,7 +1,6 @@
 #include "TextureManager.hpp"
 #include "Application.hpp"
 
-
 std::unordered_map<std::string, U32> TextureManager::s_pathToId;
 std::vector<std::unique_ptr<Texture>> TextureManager::s_textures;;
 std::mutex TextureManager::s_textureMutex;

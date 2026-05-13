@@ -1,19 +1,19 @@
 #pragma once
 #include "EngineTypes.hpp"
 
-struct alignas(16) CBDMatrix
+struct CBDMatrix
 {
 	Mat4x4 normal;
 	Mat4x4 model;
 	Mat4x4 mvp;
 };
 
-struct alignas(16) CBDSprite
+struct CBDSprite
 {
 	Mat4x4 mvp;
 };
-
-struct alignas(16) CBDLight
+/*
+struct CBDLight
 {
 	float4 ambientColor;
 	float4 diffuseColor;
@@ -24,8 +24,9 @@ struct alignas(16) CBDLight
 
 	Vec4 lightDirection;
 };
+*/
 
-struct alignas(16) CBDCamera
+struct CBDCamera
 {
 	float4 cameraPosition;
 };

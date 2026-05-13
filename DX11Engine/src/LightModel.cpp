@@ -1,2 +1,0 @@
-#include "LightModel.hpp"
-

@@ -14,7 +14,7 @@ DX11Context::~DX11Context()
 		m_deviceContext->Flush();
 	}
 
-	m_renderTargetView.Reset();
+	m_backbufferRTV.Reset();
 	m_depthStencilState.Reset();
 	m_depthStencilView.Reset();
 	m_rasterizerState.Reset();
@@ -53,6 +53,7 @@ void DX11Context::Init()
 
 	CreateDepthStencilView(width, height);
 	CreateRasterizerState();
+	CreateViewportResources(width, height);
 
 	SetRenderTarget();
 
@@ -141,7 +142,7 @@ void DX11Context::CreateRenderTargetView()
 
 	ThrowIfFailed(m_swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer)));
 
-	ThrowIfFailed(m_device->CreateRenderTargetView(backBuffer.Get(), nullptr, &m_renderTargetView));
+	ThrowIfFailed(m_device->CreateRenderTargetView(backBuffer.Get(), nullptr, &m_backbufferRTV));
 
 	backBuffer.Reset();
 }
@@ -216,7 +217,7 @@ void DX11Context::CreateRasterizerState()
 {
 	D3D11_RASTERIZER_DESC2 rasDesc{};
 	rasDesc.FillMode = D3D11_FILL_SOLID;
-	rasDesc.CullMode = D3D11_CULL_NONE;
+	rasDesc.CullMode = D3D11_CULL_BACK;
 	rasDesc.FrontCounterClockwise = FALSE;
 	rasDesc.DepthBias = 0;
 	rasDesc.DepthBiasClamp = 0.0f;
@@ -246,15 +247,37 @@ void DX11Context::SetViewport(U32 width, U32 height)
 void DX11Context::SetRenderTarget()
 {
 	if (m_deviceContext)
-		m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+		m_deviceContext->OMSetRenderTargets(1, m_backbufferRTV.GetAddressOf(), m_depthStencilView.Get());
 }
 
-void DX11Context::BeginFrame()
+void DX11Context::CreateViewportResources(U32 width, U32 height)
 {
+	D3D11_TEXTURE2D_DESC texDesc{};
+	texDesc.Width = width;
+	texDesc.Height = height;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = 0;
+
+	ThrowIfFailed(m_device->CreateTexture2D(&texDesc, nullptr, &m_viewportTexture));
+	ThrowIfFailed(m_device->CreateRenderTargetView(m_viewportTexture.Get(), nullptr, &m_viewportRTV));
+	ThrowIfFailed(m_device->CreateShaderResourceView(m_viewportTexture.Get(), nullptr, &m_viewportSRV));
+
+}
+
+void DX11Context::BeginFrame(ID3D11RenderTargetView* rtv)
+{
+	m_deviceContext->OMSetRenderTargets(1, &rtv, m_depthStencilView.Get());
 	float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f};
-	m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
+	m_deviceContext->ClearRenderTargetView(rtv, clearColor);
 	m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	SetRenderTarget();
+	
 	m_deviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 0);
 	m_deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_deviceContext->RSSetState(m_rasterizerState.Get());
@@ -275,16 +298,18 @@ void DX11Context::OnResize(U32 width, U32 height)
 
 	m_deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 
-	m_renderTargetView.Reset();
+	m_backbufferRTV.Reset();
 	m_depthStencilView.Reset();
+	m_viewportTexture.Reset();
+	m_viewportSRV.Reset();
+	m_viewportRTV.Reset();
 
 	//first parameter 0 to preserve existing number of buffers, same for third parameter
 	ThrowIfFailed(m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, m_allowTearing ? DXGI_PRESENT_ALLOW_TEARING : 0));
 
 	CreateRenderTargetView();
 	CreateDepthStencilView(width, height);
-
-	SetRenderTarget();
+	CreateViewportResources(width, height);
 
 	SetViewport(width, height);
 }

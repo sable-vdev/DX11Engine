@@ -5,7 +5,7 @@ Application* Application::s_instance = nullptr;
 
 Application::Application(U32 width, U32 height, const std::wstring& windowTitle, bool vsync) : m_vsync(false)
 {
-	if (s_instance) 
+	if (s_instance)
 		LOG("Instance of application already there");
 
 	s_instance = this;
@@ -20,30 +20,30 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle,
 	m_camera = std::make_unique<Camera>(m_window->GetWidth(), m_window->GetHeight());
 	m_timer = std::make_unique<Timer>();
 
+	m_scene = std::make_unique<Scene>();
 
 	m_imguiLayer = std::make_unique<ImGuiLayer>();
 
+	//ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", m_modelQueue);
 	ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", m_modelQueue);
-	ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", m_modelQueue);
-	//ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\teapot.obj", m_modelQueue);
-	//sprite = new Sprite("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\texture.png");
+
+	LightData data{};
+	LightEntity ente{data};
+
+	m_scene->lightManager.AddLight(ente);
 }
 
 Application::~Application()
 {
-	delete sprite;
 }
 
 void Application::Run()
 {
-	while (true)
+	while (m_window->Run())
 	{
 		m_timer->Tick();
 
 		m_timer->GetFramesPerSecond();
-		
-		if (!m_window->Run())
-			break;
 
 		m_camera->Update(m_timer->GetDeltaTime());
 
@@ -59,15 +59,17 @@ void Application::Run()
 
 		RendererQueue::AddContext(m_context->GetDeviceContext());
 
-		m_context->BeginFrame();
+		m_context->BeginFrame(m_context->GetViewportRTV());
 
 		for (const auto& model : m_models)
 		{
 			RendererQueue::Enqueue(model.get());
 		}
 
-		RendererQueue::Flush();
+		RendererQueue::Flush(m_scene.get());
 		
+		m_context->BeginFrame(m_context->GetBackbufferRTV());
+
 		m_imguiLayer->Begin();
 
 		if (m_models.size() > 0)

@@ -2,7 +2,7 @@
 #include "Application.hpp"
 #include "TextureManager.hpp"
 
-Model::Model(ID3D11Device* device) : m_cBuffer(device), m_modelMatrix(DX::XMMatrixIdentity())
+Model::Model(ID3D11Device* device) : m_cBuffer(device), m_modelMatrix(DX::XMMatrixIdentity()), m_lightBuffer(device), m_cameraPos(device)
 {
 	std::wstring path = L"..\\DX11Engine\\shaders\\";
 	vertexShader = std::make_unique<DX11VertexShader>(device, path, L"SimpleVShader.hlsl", VertexLayouts::PositionNormalTexcoord::Desc, VertexLayouts::PositionNormalTexcoord::Count);
@@ -17,7 +17,7 @@ void Model::Update(float dt)
 		* DX::XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
 }
 
-void Model::Draw(ID3D11DeviceContext* context) const
+void Model::Draw(ID3D11DeviceContext* context, const Scene& scene) const
 {
 	assert(context);
 
@@ -28,8 +28,15 @@ void Model::Draw(ID3D11DeviceContext* context) const
 
 	auto tex = TextureManager::Get(textures->diffuse);
 
+	CBDCamera cam{};
+	cam.cameraPosition = scene.cameraPos;
+
+	auto lights = scene.lightManager.GetLights();
+
 	tex->Bind(context);
-	m_cBuffer.BindVS(context, data);
+	m_cBuffer.BindVS(context, data, 0);
+	m_cameraPos.BindVS(context, cam, 1);
+	m_lightBuffer.BindPS(context, lights[0].data, 2);
 	vertexShader->Bind(context);
 	pixelShader->Bind(context);
 

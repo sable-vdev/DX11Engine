@@ -12,7 +12,7 @@ public:
 public:
 	static void AddContext(const ComPtr<ID3D11DeviceContext>& deviceContext);
 	static void Enqueue(const Model* model);
-	static void Flush();
+	static void Flush(Scene* scene);
 private:
 	static ComPtr<ID3D11DeviceContext> s_deviceContext;
 	static std::vector<const Model*> s_queue;
