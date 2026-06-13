@@ -6,11 +6,11 @@
 class LightManager
 {
 public:
-	void AddLight(const LightEntity& light);
+	void AddLight(LightEntity&& light);
 	void RemoveLight(I32 id);
 
 	const std::vector<LightEntity>& GetLights() const { return m_lights; };
-	LightEntity& GetLight(I32 id) { return m_lights.at(id); }
+	LightEntity& GetLight(I32 id) { return m_lights[id]; }
 private:
 	std::vector<LightEntity> m_lights;
 };

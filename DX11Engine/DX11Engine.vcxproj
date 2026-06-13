@@ -113,14 +113,15 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui_lib\;%(AdditionalIncludeDirectories);C:\Dev\DX11Engine\assimp/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)stb\;$(SolutionDir)imgui_lib\;%(AdditionalIncludeDirectories);$(SolutionDir)assimp\include;$(SolutionDir)spdlog\include\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);assimp-vc143-mtd.lib;zlibstaticd.lib;</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Dev\DX11Engine\assimp\build\lib\Debug;C:\Dev\DX11Engine\imgui_lib\bin\x64\Debug;%(AdditionalLibraryDirectories);C:\Dev\DX11Engine\assimp\build\contrib\zlib\Debug;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)assimp\build\lib\$(Configuration);$(SolutionDir)imgui_lib\bin\x64\$(Configuration);%(AdditionalLibraryDirectories);$(SolutionDir)assimp\build\contrib\zlib\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -132,20 +133,23 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Dev\DX11Engine\stb;C:\Dev\DX11Engine\imgui_lib\;%(AdditionalIncludeDirectories);C:\Dev\DX11Engine\tinyobj;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)stb\;$(SolutionDir)imgui_lib\;%(AdditionalIncludeDirectories);$(SolutionDir)assimp\include;$(SolutionDir)spdlog\include\</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Dev\DX11Engine\imgui_lib\bin\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);assimp-vc143-mt.lib;zlibstatic.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)assimp\build\lib\$(Configuration);$(SolutionDir)imgui_lib\bin\x64\$(Configuration);%(AdditionalLibraryDirectories);$(SolutionDir)assimp\build\contrib\zlib\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\LightManager.cpp" />
     <ClCompile Include="src\Frustum.cpp" />
-    <ClCompile Include="src\Sprite.cpp" />
+    <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\RendererQueue.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\ObjectLoader.cpp" />
@@ -165,11 +169,12 @@
     <ClCompile Include="src\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Model2.hpp" />
+    <ClInclude Include="src\Entity.hpp" />
     <ClInclude Include="src\Scene.hpp" />
     <ClInclude Include="src\Light.hpp" />
     <ClInclude Include="src\LightManager.hpp" />
     <ClInclude Include="src\Frustum.hpp" />
-    <ClInclude Include="src\Sprite.hpp" />
     <ClInclude Include="src\RendererQueue.hpp" />
     <ClInclude Include="src\Mesh.hpp" />
     <ClInclude Include="src\ObjectLoader.hpp" />
@@ -188,6 +193,7 @@
     <ClInclude Include="src\EngineTypes.hpp" />
     <ClInclude Include="src\Logger.hpp" />
     <ClInclude Include="src\Timer.hpp" />
+    <ClInclude Include="src\Transform.hpp" />
     <ClInclude Include="src\Window.hpp" />
     <ClInclude Include="src\Texture.hpp" />
     <ClInclude Include="src\containers\TSQueue.hpp" />

@@ -15,7 +15,7 @@ U32 TextureManager::Load(const std::string& path)
 
 	if (auto it = s_pathToId.find(path); it != s_pathToId.end())
 	{
-		LOG("Item already cached, returning id")
+		LOG_INFO("Item already cached, returning id");
 		return it->second;
 	}
 

@@ -35,8 +35,6 @@ public:
 	ID3D11ShaderResourceView* GetViewportSRV() const { return m_viewportSRV.Get(); }
 	ID3D11RenderTargetView* GetViewportRTV() const { return m_viewportRTV.Get(); }
 	ID3D11RenderTargetView* GetBackbufferRTV() const { return m_backbufferRTV.Get(); }
-
-	Mat4x4 GetWorldMatrix() const { return m_worldMatrix; }
 private:
 	void CreateDeviceAndSwapChain(HWND hwnd);
 	void CreateRenderTargetView();
@@ -57,7 +55,6 @@ private:
 	ComPtr<ID3D11Texture2D> m_viewportTexture;
 	ComPtr<ID3D11ShaderResourceView> m_viewportSRV;
 	ComPtr<ID3D11RenderTargetView> m_viewportRTV;
-	Mat4x4 m_worldMatrix;
 	bool m_allowTearing = false;
 };
 

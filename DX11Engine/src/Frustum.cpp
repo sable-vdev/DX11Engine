@@ -1,6 +1,6 @@
 #include "Frustum.hpp"
 
-void Frustum::CreateFrustumFromMatrix(const Mat4x4& viewProj)
+void Frustum::CreateFrustumFromMatrix(const Mat4& viewProj)
 {
 	DX::XMFLOAT4X4 mat;
 	DX::XMStoreFloat4x4(&mat, viewProj);

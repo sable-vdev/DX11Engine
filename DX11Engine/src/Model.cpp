@@ -13,7 +13,7 @@ Model::Model(ID3D11Device* device) : m_cBuffer(device), m_modelMatrix(DX::XMMatr
 
 void Model::Update(float dt)
 {
-	m_modelMatrix = DX::XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z)* DX::XMMatrixRotationRollPitchYaw(m_rotation.x, m_rotation.y, m_rotation.z)
+	m_modelMatrix = DX::XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z) * DX::XMMatrixRotationRollPitchYaw(m_rotation.x, m_rotation.y, m_rotation.z)
 		* DX::XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
 }
 
@@ -22,16 +22,16 @@ void Model::Draw(ID3D11DeviceContext* context, const Scene& scene) const
 	assert(context);
 
 	CBDMatrix data{};
-	data.normal = DX::XMMatrixTranspose(DX::XMMatrixInverse(nullptr, m_modelMatrix));
-	data.model = DX::XMMatrixTranspose(m_modelMatrix);
-	data.mvp = DX::XMMatrixTranspose(m_modelMatrix * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
+	data.normal = DX::XMMatrixInverse(nullptr, m_modelMatrix);
+	data.model = m_modelMatrix;
+	data.mvp = m_modelMatrix * Camera::GetViewMatrix() * Camera::GetProjectionMatrix();
 
 	auto tex = TextureManager::Get(textures->diffuse);
 
 	CBDCamera cam{};
 	cam.cameraPosition = scene.cameraPos;
 
-	auto lights = scene.lightManager.GetLights();
+	const auto& lights = scene.lightManager.GetLights();
 
 	tex->Bind(context);
 	m_cBuffer.BindVS(context, data, 0);

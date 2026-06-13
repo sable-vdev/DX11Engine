@@ -15,5 +15,5 @@ struct Frustum
 {
 	Plane planes[6];
 
-	void CreateFrustumFromMatrix(const Mat4x4& viewProj);
+	void CreateFrustumFromMatrix(const Mat4& viewProj);
 };

@@ -78,8 +78,8 @@ Texture::CPUTex Texture::LoadFromFile(const std::string& file)
 
 	if (!tex.pixels)
 	{
-		LOG("Failed to load the texture");
-		LOG(stbi_failure_reason());
+		LOG_ERROR("Failed to load the texture");
+		LOG_ERROR(stbi_failure_reason());
 		throw std::runtime_error("");
 	}
 

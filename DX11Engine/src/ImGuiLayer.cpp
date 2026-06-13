@@ -33,15 +33,6 @@ void ImGuiLayer::Begin()
 	ImGui::NewFrame();
 }
 
-void ImGuiLayer::ModelInfo(Model& model)
-{
-	ImGui::Begin(model.name.c_str());
-	ImGui::DragFloat3("Position", &model.GetPosition().x);
-	ImGui::DragFloat3("Rotation", &model.GetRotation().x);
-	ImGui::DragFloat3("Scale", &model.GetScale().x);
-	ImGui::End();
-}
-
 void ImGuiLayer::Render()
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -49,7 +40,7 @@ void ImGuiLayer::Render()
 	//Dockspace stuff
 	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | 
-		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground;
 
 	const ImGuiViewport* imGuiViewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(imGuiViewport->WorkPos);
@@ -66,26 +57,10 @@ void ImGuiLayer::Render()
 	ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
 	static bool firstRun = true;
-
 	if (firstRun)
 	{
+		OnStart(dockspaceId, imGuiViewport);
 		firstRun = false;
-
-		ImGui::DockBuilderRemoveNode(dockspaceId);
-		ImGui::DockBuilderAddNode(dockspaceId, ImGuiDockNodeFlags_DockSpace);
-		ImGui::DockBuilderSetNodeSize(dockspaceId, imGuiViewport->WorkSize);
-
-		ImGuiID dockMainId = dockspaceId;
-
-		ImGuiID dockLeft, dockRight;
-		ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.2f, &dockLeft, &dockMainId);
-		ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Right, 0.2f, &dockRight, &dockMainId);
-
-		ImGui::DockBuilderDockWindow("Viewport", dockMainId);
-		//ImGui::DockBuilderDockWindow("Directional Light", dockMainId);
-		//ImGui::DockBuilderDockWindow("Info", dockMainId);
-
-		ImGui::DockBuilderFinish(dockspaceId);
 	}
 
 	static bool show_demo_window = false;
@@ -97,11 +72,15 @@ void ImGuiLayer::Render()
 	ImGui::Begin("Info");
 	ImGui::Checkbox("Demo Window", &show_demo_window);
 	ImGui::SameLine();
-	if(ImGui::Checkbox("Vsync", &Application::Get().GetVsync()))
-		Application::Get().ToggleVsync(Application::Get().GetVsync());
 
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+	static bool vsync = Application::Get().GetVsync();
+	if(ImGui::Checkbox("Vsync", &vsync))
+		Application::Get().ToggleVsync(vsync);
+
+	ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 	ImGui::End();
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
 	ImGui::Begin("Viewport");
 	ImVec2 size = ImGui::GetContentRegionAvail();
@@ -109,9 +88,10 @@ void ImGuiLayer::Render()
 	ImGui::Image((ImTextureID)Application::Get().GetSRV(), size);
 
 	ImGui::End();
+	ImGui::PopStyleVar();
 
 	ImGui::Begin("Directional Light");
-	auto light = Application::Get().GetScene().lightManager.GetLight(0);
+	auto& light = Application::Get().GetScene().lightManager.GetLight(0);
 
 	ImGui::DragFloat3("Position", &light.data.position.x);
 	ImGui::DragFloat3("Rotation", &light.data.direction.x);
@@ -130,4 +110,24 @@ void ImGuiLayer::End()
 {
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ImGuiLayer::OnStart(ImGuiID dockSpaceId, const ImGuiViewport* imGuiViewport)
+{
+	ImGui::DockBuilderRemoveNode(dockSpaceId);
+	ImGui::DockBuilderAddNode(dockSpaceId, ImGuiDockNodeFlags_DockSpace);
+	ImGui::DockBuilderSetNodeSize(dockSpaceId, imGuiViewport->WorkSize);
+	
+	ImGuiID dockMainId = dockSpaceId;
+	
+	ImGuiID dockLeft, dockRight;
+	ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.2f, &dockLeft, &dockMainId);
+	ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Right, 0.2f, &dockRight, &dockMainId);
+	
+	ImGui::DockBuilderDockWindow("Viewport", dockMainId);
+	ImGui::DockBuilderDockWindow("Directional Light", dockRight);
+	ImGui::DockBuilderDockWindow("Info", dockRight);
+	ImGui::DockBuilderDockWindow("Hierachy", dockLeft);
+	
+	ImGui::DockBuilderFinish(dockSpaceId);
 }

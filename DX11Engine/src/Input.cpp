@@ -17,7 +17,7 @@ Input::Input()
 		}
 	}
 
-	LOG("Input created!");
+	LOG_INFO("Input created!");
 }
 
 Input::~Input()

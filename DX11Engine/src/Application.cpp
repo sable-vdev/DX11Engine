@@ -5,8 +5,10 @@ Application* Application::s_instance = nullptr;
 
 Application::Application(U32 width, U32 height, const std::wstring& windowTitle, bool vsync) : m_vsync(false)
 {
+	Logger::Init();
+
 	if (s_instance)
-		LOG("Instance of application already there");
+		LOG_ERROR("Instance of application already there");
 
 	s_instance = this;
 
@@ -27,10 +29,14 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle,
 	//ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", m_modelQueue);
 	ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", m_modelQueue);
 
-	LightData data{};
-	LightEntity ente{data};
-
-	m_scene->lightManager.AddLight(ente);
+	LightData data;
+	data.position = float4(0, 0, 0, 1);
+	data.direction = float4(-0.5f, -1.0f, -0.5f, 0);
+	data.ambient = float4(0.1f, 0.1f, 0.1f, 1);
+	data.diffuse = float4(1, 1, 1, 1);
+	data.specular = float4(1, 1, 1, 1);
+	data.specularPower = 32.0f;
+	m_scene->lightManager.AddLight(LightEntity{data});
 }
 
 Application::~Application()
@@ -67,13 +73,10 @@ void Application::Run()
 		}
 
 		RendererQueue::Flush(m_scene.get());
-		
+
 		m_context->BeginFrame(m_context->GetBackbufferRTV());
 
 		m_imguiLayer->Begin();
-
-		if (m_models.size() > 0)
-			m_imguiLayer->ModelInfo(*m_models[0]);
 
 		m_imguiLayer->Render();
 

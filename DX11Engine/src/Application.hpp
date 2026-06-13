@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 
+#include "Logger.hpp"
 #include "Window.hpp"
 #include "DX11Context.hpp"
 #include "Input.hpp"
@@ -72,7 +73,7 @@ public:
 		return 0;
 	}
 
-	Scene GetScene() const
+	Scene& GetScene() const
 	{
 		return *m_scene;
 	}

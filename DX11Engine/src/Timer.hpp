@@ -34,7 +34,7 @@ public:
 			m_framesPerSecond = m_frameCount;
 			m_frameCount = 0;
 			m_timeElapsed = 0.0f;
-			LOG(std::to_string(m_framesPerSecond) + ":" + std::to_string(m_deltaTime));
+			LOG_INFO(std::to_string(m_framesPerSecond) + ":" + std::to_string(m_deltaTime));
 		}
 
 	}

@@ -20,7 +20,7 @@ void DX11VertexShader::Create(ID3D11Device* device, const std::wstring& shaderPa
 
 	if (FAILED(hr))
 	{
-		LOG(static_cast<char*>(errorBlob->GetBufferPointer()));
+		LOG_ERROR(static_cast<char*>(errorBlob->GetBufferPointer()));
 		errorBlob->Release();
 
 		ThrowIfFailed(hr);
@@ -84,7 +84,7 @@ void DX11PixelShader::Create(ID3D11Device* device, const std::wstring& shaderPat
 
 	if (FAILED(hr))
 	{
-		LOG(static_cast<char*>(errorBlob->GetBufferPointer()));
+		LOG_ERROR(static_cast<char*>(errorBlob->GetBufferPointer()));
 		errorBlob->Release();
 
 		ThrowIfFailed(hr);

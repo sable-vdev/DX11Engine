@@ -19,7 +19,7 @@ Window::Window(U32 width, U32 height, const std::wstring& windowTitle) : m_windo
 	wc.lpszClassName = m_windowClass.c_str();
 
 	if (!RegisterClass(&wc))
-		LOG("Failed to register class\n");
+		LOG_ERROR("Failed to register class\n");
 
 	I32 posX = (GetSystemMetrics(SM_CXSCREEN) - m_width) / 2;
 	I32 posY = (GetSystemMetrics(SM_CYSCREEN) - m_height) / 2;
@@ -35,7 +35,7 @@ Window::Window(U32 width, U32 height, const std::wstring& windowTitle) : m_windo
 		posX, posY, adjustedWidth, adjustedHeight, nullptr, nullptr, m_hInstance, this);
 
 	if (!m_hwnd) 
-		LOG("Failed to initialize the window handle");
+		LOG_ERROR("Failed to initialize the window handle");
 
 	if (m_hwnd != 0)
 	{

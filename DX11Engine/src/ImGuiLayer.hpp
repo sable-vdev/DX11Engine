@@ -12,10 +12,10 @@ public:
 	~ImGuiLayer();
 
 	void Begin();
-
-	void ModelInfo(Model& model);
-	void LightInfo(LightEntity& ent);
 	void Render();
 	void End();
+
+public:
+	void OnStart(ImGuiID dockSpaceId, const ImGuiViewport* imGuiViewport);
 };
 

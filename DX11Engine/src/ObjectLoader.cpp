@@ -4,7 +4,6 @@
 
 #include <chrono>
 #include <thread>
-#include <future>
 #include <memory>
 
 
@@ -38,10 +37,9 @@ std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        std::string error = "Assimp error: ";
-        error += importer.GetErrorString();
+        std::string error = std::format("Assimp error: {}", importer.GetErrorString());
 
-        LOG(error);
+        LOG_ERROR(error);
         return nullptr;
     }
 
@@ -53,15 +51,15 @@ std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
 
     if (model->meshes.empty())
     {
-        LOG("Failed to create model object, because the file seems to be empty");
+        LOG_ERROR("Failed to create model object, because the file seems to be empty");
         return nullptr;
     }
     
-    LOG("Created the model and returning it now!");
+    LOG_INFO("Created the model and returning it now!");
 
     auto endTime = std::chrono::system_clock::now();
     std::string timePassed = std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count()) + " ms";
-    LOG(timePassed);
+    LOG_DEBUG("Loaded ' " + timePassed);
 
     return model;
 }

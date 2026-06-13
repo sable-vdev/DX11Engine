@@ -10,9 +10,9 @@
 Vec4 Camera::s_up = DX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 float3 Camera::s_lookAt = float3(0.0f, 0.0f, 1.0f);
 
-Mat4x4 Camera::s_viewMatrix = DX::XMMatrixIdentity();
-Mat4x4 Camera::s_projectionMatrix = DX::XMMatrixIdentity();
-Mat4x4 Camera::s_orthographicMatrix = DX::XMMatrixIdentity();
+Mat4 Camera::s_viewMatrix = DX::XMMatrixIdentity();
+Mat4 Camera::s_projectionMatrix = DX::XMMatrixIdentity();
+Mat4 Camera::s_orthographicMatrix = DX::XMMatrixIdentity();
 
 CBDCamera Camera::s_cameraConstantInfo = CBDCamera{};
 

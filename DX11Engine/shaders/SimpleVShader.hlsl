@@ -1,8 +1,8 @@
 cbuffer VS_CONST_BUFFER : register(b0)
 {
-    matrix normal;
-    matrix model;
-    matrix mvp;
+    row_major matrix normal;
+    row_major matrix model;
+    row_major matrix mvp;
 }
 
 cbuffer VS_CONST_CAM_BUFFER : register(b1)
@@ -32,10 +32,10 @@ VSOutput main(VSInput input)
     output.position = mul(float4(input.position, 1.0f), mvp);
     output.tex = input.tex;
     //transform normal to world space
-    output.norm = normalize(mul((float3x3) normal, input.normal));
+    output.norm = normalize(mul(input.normal, (float3x3) normal));
     
     //transform position to world space
-    float4 worldPos = mul(model, float4(input.position, 1.0f));
+    float4 worldPos = mul(float4(input.position, 1.0f), model);
     
     output.viewDir = normalize(cameraPosition.xyz - worldPos.xyz);
     

@@ -12,8 +12,8 @@ using U16 = unsigned short;
 using U32 = unsigned int;
 using U64 = unsigned long long;
 
-using Mat3x3 = DX::XMFLOAT3X3;
-using Mat4x4 = DX::XMMATRIX;
+using Mat3 = DX::XMFLOAT3X3;
+using Mat4 = DX::XMMATRIX;
 
 using float2 = DX::XMFLOAT2;
 using float3 = DX::XMFLOAT3;

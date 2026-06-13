@@ -4,7 +4,7 @@
 struct alignas(16) LightData
 {
 	float4 position = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	float4 direction = float4(-0.5f, -1.0f, -0.5f, 0.0f); // w for lighttyype
+	float4 direction = float4(-0.5f, -1.0f, -0.5f, 0.0f);
 
 	float4 ambient = float4(0.1f, 0.1f, 0.1f, 1.0f);
 	float4 diffuse = float4(1.0f, 1.0f, 1.0f, 1.0f);

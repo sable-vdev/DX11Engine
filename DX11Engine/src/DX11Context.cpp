@@ -1,6 +1,6 @@
 #include "DX11Context.hpp"
 
-DX11Context::DX11Context(HWND hwnd) : m_hwnd(hwnd), m_worldMatrix()
+DX11Context::DX11Context(HWND hwnd) : m_hwnd(hwnd)
 {
 }
 
@@ -56,8 +56,6 @@ void DX11Context::Init()
 	CreateViewportResources(width, height);
 
 	SetRenderTarget();
-
-	m_worldMatrix = DX::XMMatrixIdentity();
 }
 
 void DX11Context::CreateDeviceAndSwapChain(HWND hwnd)
@@ -83,7 +81,7 @@ void DX11Context::CreateDeviceAndSwapChain(HWND hwnd)
 
 	std::wstring description = desc.Description;
 
-	LOG_W(description.c_str());
+	LOG_INFO(Logger::WideToNarrow(description.c_str()));
 
 	I32 width = 0, height = 0;
 	RECT r{};
