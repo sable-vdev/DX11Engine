@@ -3,7 +3,6 @@
 #include "TextureManager.hpp"
 
 #include <chrono>
-#include <thread>
 #include <memory>
 
 
@@ -15,16 +14,6 @@ std::unique_ptr<Model> ObjectLoader::LoadObject(std::string filename)
 std::unique_ptr<Model> ObjectLoader::LoadObject(const char* filename)
 {
     return LoadObjectImple(filename);
-}
-
-void ObjectLoader::LoadObjectAsync(const char* filename, TSQueue<std::unique_ptr<Model>>& models)
-{
-    std::thread([filename, &models]() {
-        auto model = LoadObjectImple(filename);
-
-        if(model)
-            models.Push(std::move(model));
-        }).detach();
 }
 
 std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
@@ -43,7 +32,7 @@ std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
         return nullptr;
     }
 
-    std::unique_ptr<Model> model = std::make_unique<Model>(Application::Get().GetDevice());
+    std::unique_ptr<Model> model = std::make_unique<Model>();
     std::string name = std::filesystem::path(filename).filename().stem().string();
     model->name = name;
 
@@ -58,8 +47,8 @@ std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
     LOG_INFO("Created the model and returning it now!");
 
     auto endTime = std::chrono::system_clock::now();
-    std::string timePassed = std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count()) + " ms";
-    LOG_DEBUG("Loaded ' " + timePassed);
+    auto timePassed = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+    LOG_DEBUG("Loaded '" + model->name + "' in " + std::to_string(timePassed) + " ms");;
 
     return model;
 }
@@ -68,9 +57,7 @@ void ObjectLoader::ProcessNode(Model& model, aiNode* node, const aiScene* scene,
 {
     for (U32 i{}; i < node->mNumMeshes; i++)
     {
-        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        //model.meshes.push_back(
-        ProcessMesh(model, mesh, scene, directory);
+        ProcessMesh(model, scene->mMeshes[node->mMeshes[i]], scene, directory);
     }
 
     for (U32 i{}; i < node->mNumChildren; i++)
@@ -91,15 +78,11 @@ void ObjectLoader::ProcessMesh(Model& model, aiMesh* mesh, const aiScene* scene,
     {
         Vertex vert{};
 
-        vert.pos.x = mesh->mVertices[i].x;
-        vert.pos.y = mesh->mVertices[i].y;
-        vert.pos.z = mesh->mVertices[i].z;
+        vert.pos = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z };
 
         if (mesh->mNormals)
         {
-            vert.normal.x = mesh->mNormals[i].x;
-            vert.normal.y = mesh->mNormals[i].y;
-            vert.normal.z = mesh->mNormals[i].z;
+            vert.normal = { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z };
         }
 
         if (mesh->mTextureCoords[0])
@@ -117,7 +100,7 @@ void ObjectLoader::ProcessMesh(Model& model, aiMesh* mesh, const aiScene* scene,
 
         for (U32 j{}; j < face.mNumIndices; j++)
         {
-            indices.push_back(std::move(face.mIndices[j]));
+            indices.push_back(face.mIndices[j]);
         }
     }
 
@@ -130,10 +113,8 @@ void ObjectLoader::ProcessMesh(Model& model, aiMesh* mesh, const aiScene* scene,
 
         std::string path = directory + "\\" + str.C_Str();
 
-        model.textures->diffuse = TextureManager::Load(path);
+        model.textures.diffuse = TextureManager::Load(path);
     }
 
     model.meshes.push_back(Mesh(vertices, indices, Application::Get().GetDevice()));
-
-    //return Mesh(vertices, indices, Application::Get().GetDevice());
 }

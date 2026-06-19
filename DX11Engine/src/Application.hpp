@@ -91,10 +91,7 @@ private:
 	std::unique_ptr<Camera> m_camera;
 	std::unique_ptr<Timer> m_timer;
 	std::unique_ptr<ImGuiLayer> m_imguiLayer;
-	std::vector<std::unique_ptr<Model>> m_models;
-	TSQueue<std::unique_ptr<Model>> m_modelQueue;
 	std::unique_ptr<Scene> m_scene;
-	//std::unique_ptr<LightManager> m_lightManager;
 
 	bool m_vsync = false;
 };

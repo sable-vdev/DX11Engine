@@ -3,25 +3,20 @@
 
 struct Transform
 {
-	float3 position;
-	float3 rotation; //EULER FOR NOWWWWWWWWWWWWWWW NEEDS TO BE CHANGED ASAP
-	float3 scale;
+	Mat4 local;
+	Mat4 world;
 
-	Transform* parent = nullptr;
+	float3 position{ 0.f, 0.f, 0.f };
+	float3 rotation{ 0.f, 0.f, 0.f }; //EULER FOR NOWWWWWWWWWWWWWWW NEEDS TO BE CHANGED ASAP
+	float3 scale{ 1.f, 1.f, 1.f };
 
-	inline Mat4 GetLocalMatrix() const
+	void UpdateLocal()
 	{
-		return DX::XMMatrixScaling(scale.x, scale.y, scale.z)
-			* DX::XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)
-			* DX::XMMatrixTranslation(position.x, position.y, position.z);
+		DX::XMMATRIX loc =
+			DX::XMMatrixScaling(scale.x, scale.y, scale.z) *
+			DX::XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z) *
+			DX::XMMatrixTranslation(position.x, position.y, position.z);
+		
+		DX::XMStoreFloat4x4(&local, loc);
 	}
-
-	inline Mat4 GetWorldMatrix() const
-	{
-		if (parent)
-			return GetLocalMatrix() * parent->GetWorldMatrix();
-
-		return GetLocalMatrix();
-	}
-
 };

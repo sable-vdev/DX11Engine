@@ -33,7 +33,7 @@ void ImGuiLayer::Begin()
 	ImGui::NewFrame();
 }
 
-void ImGuiLayer::Render()
+void ImGuiLayer::Render(Scene& scene)
 {
 	ImGuiIO& io = ImGui::GetIO();
 
@@ -83,7 +83,7 @@ void ImGuiLayer::Render()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
 	ImGui::Begin("Viewport");
-	ImVec2 size = ImGui::GetContentRegionAvail();
+	ImVec2 size = ImVec2(Application::Get().GetWidth(), Application::Get().GetHeight());
 
 	ImGui::Image((ImTextureID)Application::Get().GetSRV(), size);
 
@@ -100,8 +100,43 @@ void ImGuiLayer::Render()
 	ImGui::DragFloat4("Specular", &light.data.specular.x);
 	ImGui::End();
 
+	ImGui::Begin("Hierachy");
+	if (ImGui::TreeNode(scene.name.c_str()))
+	{
+		for (auto& e : scene.GetEntities())
+		{
+			if (!e->parent)
+			{
+				DrawEntity(e.get());
+			}
+		}
+		ImGui::TreePop();
+	}
 	ImGui::End();
 
+	ImGui::Begin("Inspector");
+	if (m_selectedEntity)
+	{
+		ImGui::Separator();
+
+		ImGui::DragFloat3(
+			"Position",
+			&m_selectedEntity->transform.position.x,
+			0.1f);
+
+		ImGui::DragFloat3(
+			"Rotation",
+			&m_selectedEntity->transform.rotation.x,
+			0.1f);
+
+		ImGui::DragFloat3(
+			"Scale",
+			&m_selectedEntity->transform.scale.x,
+			0.1f);
+	}
+	ImGui::End();
+
+	ImGui::End();
 	io.DisplaySize = ImVec2(static_cast<float>(Application::Get().GetWidth()),
 		static_cast<float>(Application::Get().GetHeight()));
 }
@@ -110,6 +145,29 @@ void ImGuiLayer::End()
 {
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ImGuiLayer::DrawEntity(Entity* entity)
+{
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+	if (m_selectedEntity == entity)
+		flags |= ImGuiTreeNodeFlags_Selected;
+
+	bool opened = ImGui::TreeNodeEx(entity, flags, "%s", entity->name.c_str());
+
+	if (ImGui::IsItemClicked())
+		m_selectedEntity = entity;
+
+	if (opened)
+	{
+		for (Entity* entity : entity->children)
+		{
+			DrawEntity(entity);
+		}
+
+		ImGui::TreePop();
+	}
 }
 
 void ImGuiLayer::OnStart(ImGuiID dockSpaceId, const ImGuiViewport* imGuiViewport)
@@ -127,6 +185,7 @@ void ImGuiLayer::OnStart(ImGuiID dockSpaceId, const ImGuiViewport* imGuiViewport
 	ImGui::DockBuilderDockWindow("Viewport", dockMainId);
 	ImGui::DockBuilderDockWindow("Directional Light", dockRight);
 	ImGui::DockBuilderDockWindow("Info", dockRight);
+	ImGui::DockBuilderDockWindow("Inspector", dockRight);
 	ImGui::DockBuilderDockWindow("Hierachy", dockLeft);
 	
 	ImGui::DockBuilderFinish(dockSpaceId);

@@ -12,8 +12,8 @@ public:
 	void Update(float dt);
 	void OnResize(I32 width, I32 height);
 
-	static inline Mat4 GetViewMatrix() { return s_viewMatrix; }
-	static inline Mat4 GetProjectionMatrix() { return s_projectionMatrix; }
+	static const inline Mat4& GetViewMatrix() { return s_viewMatrix; }
+	static const inline Mat4& GetProjectionMatrix() { return s_projectionMatrix; }
 	static inline Mat4 GetOrthographicMatrix() { return s_orthographicMatrix; }
 
 	static inline CBDCamera GetConstantBufferInfo() { return s_cameraConstantInfo; }
@@ -25,6 +25,7 @@ public:
 
 		return dest;
 	};
+
 	inline float4 GetPosition() const { return m_position; }
 	inline float3 GetRotation() const { return m_rotation; }
 	inline float GetFar() const { return m_farZ; }

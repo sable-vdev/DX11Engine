@@ -1,86 +1,44 @@
 #pragma once
 #include <unordered_map>
+
+#include "Camera.hpp"
 #include "Entity.hpp"
 #include "LightManager.hpp"
+#include "Material.hpp"
+#include "ObjectLoader.hpp"
 
 class Scene
 {
 public:
-	Scene(ID3D11Device* device) :
+	Scene(ID3D11Device* device, std::string name) :
 		m_matrixBuffer(device),
 		m_lightBuffer(device),
-		m_cameraBuffer(device)
+		m_cameraBuffer(device),
+		name(name)
 	{
 	}
 
-	std::shared_ptr<Model> LoadModel(const std::string& path)
-	{
-		auto it = m_models.find(path);
-
-		if (it != m_models.end())
-		{
-			return it->second;
-		}
-
-		std::shared_ptr<Model> model = ObjectLoader::LoadObject(path);
-		
-		if(model)
-			m_models.emplace(path, model);
-
-		return model;
-	}
-
-	/*
-	std::shared_ptr<ModelTexture> LoadTexture(const std::string& path, ID3D11Device* device)
-	{
-		auto it = m_materials.find(path);
-
-		if (it != m_materials.end())
-			return it->second;
-
-		auto mat = std::make_shared<ModelTexture>()
-	}
-	*/
-
-	Entity* CreateEntity(const std::string& path)
-	{
-		Entity* e = &m_entities.emplace_back(std::filesystem::path(path).filename().stem().string());
-		e->model = LoadModel(path);
-		
-	}
-
-	void Draw(ID3D11DeviceContext* context) const
-	{
-		for (const Entity& e : m_entities)
-		{
-			if (!e.active || !e.model)
-				continue;
-
-			Mat4 world = e.transform.GetWorldMatrix();
-
-			CBDMatrix matrices{};
-			matrices.model = world;
-			matrices.normal = DX::XMMatrixInverse(nullptr, world);
-			matrices.mvp = world * Camera::GetViewMatrix() * Camera::GetProjectionMatrix();
-
-			CBDCamera cam{};
-			cam.cameraPosition = cameraPos;
+	std::shared_ptr<Model> LoadModel(const std::string& path);
+	std::shared_ptr<Material> GetOrCreateMaterial(const std::string& path, ID3D11Device* device);
+	Entity* CreateEntity(const std::string& path, std::shared_ptr<Material> material);
 
 
-			m_matrixBuffer.BindVS(context, matrices, 0);
-			m_cameraBuffer.BindVS(context, cam, 1);
-			m_lightBuffer.BindPS(context, lightManager.GetLights()[0].data, 1);
+	std::vector<std::unique_ptr<Entity>>& GetEntities() { return m_entities; }
 
-		}
-	}
+	void Update(float dt);
+	void Draw(ID3D11DeviceContext* context) const;
+
+private:
+	void CalculateWorld(Entity* e, DX::XMMATRIX parent);
 
 public:
 	LightManager lightManager;
-	float4 cameraPos;
+	std::string name;
+	float4 cameraPos = float4(0.0f, 0.f, 0.f, 0.f);
 private:
-	std::vector<Entity> m_entities;
+	std::vector<std::unique_ptr<Entity>> m_entities;
 	std::unordered_map<std::string, std::shared_ptr<Model>> m_models;
-	std::unordered_map<std::string, std::shared_ptr<ModelTexture>> m_materials;
+	std::unordered_map<std::string, std::shared_ptr<Material>> m_materials;
 
 	DX11ConstantBuffer<CBDMatrix> m_matrixBuffer;
 	DX11ConstantBuffer<LightData> m_lightBuffer;

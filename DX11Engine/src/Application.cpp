@@ -1,5 +1,4 @@
 #include "Application.hpp"
-#include "RendererQueue.hpp"
 
 Application* Application::s_instance = nullptr;
 
@@ -13,21 +12,16 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle,
 	s_instance = this;
 
 	m_window = std::make_unique<Window>(width, height, windowTitle);
-
 	m_context = std::make_unique<DX11Context>(m_window->GetHWND());
-
 	m_context->Init();
 
 	m_input = std::make_unique<Input>();
 	m_camera = std::make_unique<Camera>(m_window->GetWidth(), m_window->GetHeight());
 	m_timer = std::make_unique<Timer>();
 
-	m_scene = std::make_unique<Scene>();
+	m_scene = std::make_unique<Scene>(m_context->GetDevice(), "TestScene");
 
 	m_imguiLayer = std::make_unique<ImGuiLayer>();
-
-	//ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", m_modelQueue);
-	ObjectLoader::LoadObjectAsync("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", m_modelQueue);
 
 	LightData data;
 	data.position = float4(0, 0, 0, 1);
@@ -37,6 +31,10 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle,
 	data.specular = float4(1, 1, 1, 1);
 	data.specularPower = 32.0f;
 	m_scene->lightManager.AddLight(LightEntity{data});
+
+	auto defMaterial = m_scene->GetOrCreateMaterial("default", m_context->GetDevice());
+
+	m_scene->CreateEntity("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", defMaterial);
 }
 
 Application::~Application()
@@ -53,33 +51,17 @@ void Application::Run()
 
 		m_camera->Update(m_timer->GetDeltaTime());
 
-
-		std::unique_ptr<Model> model;
-		while (m_modelQueue.TryPop(model))
-		{
-			m_models.push_back(std::move(model));
-		}
-
-		for (const auto& model : m_models)
-			model->Update(m_timer->GetDeltaTime());
-
-		RendererQueue::AddContext(m_context->GetDeviceContext());
+		m_scene->cameraPos = m_camera->GetPosition();
 
 		m_context->BeginFrame(m_context->GetViewportRTV());
 
-		for (const auto& model : m_models)
-		{
-			RendererQueue::Enqueue(model.get());
-		}
-
-		RendererQueue::Flush(m_scene.get());
+		m_scene->Update(m_timer->GetDeltaTime());
+		m_scene->Draw(m_context->GetDeviceContext());
 
 		m_context->BeginFrame(m_context->GetBackbufferRTV());
 
 		m_imguiLayer->Begin();
-
-		m_imguiLayer->Render();
-
+		m_imguiLayer->Render(*m_scene);
 		m_imguiLayer->End();
 
 		m_context->EndFrame(m_vsync);

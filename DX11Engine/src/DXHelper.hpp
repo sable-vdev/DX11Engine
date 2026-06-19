@@ -6,6 +6,7 @@
 inline bool ThrowIfFailed(HRESULT hr)
 {
 	if (FAILED(hr))
+		//GetDeviceRemovedReason
 		throw std::runtime_error("");
 
 	return false;

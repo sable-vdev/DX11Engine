@@ -3,7 +3,7 @@
 #include "Imgui/imgui_impl_dx11.h"
 #include "../../imgui_lib/imgui.h"
 
-#include "Model.hpp"
+#include "Scene.hpp"
 
 class ImGuiLayer
 {
@@ -12,10 +12,13 @@ public:
 	~ImGuiLayer();
 
 	void Begin();
-	void Render();
+	void Render(Scene& scene);
 	void End();
 
-public:
 	void OnStart(ImGuiID dockSpaceId, const ImGuiViewport* imGuiViewport);
+private:
+	void DrawEntity(Entity* entity);
+private:
+	Entity* m_selectedEntity = nullptr;
 };
 
