@@ -1,6 +1,6 @@
 # Custom DirectX 11 Rendering Engine in C++
 
-DX11Engine is a custom rendering engine built from scratch in C++ using DirectX 11. It currently supports object loading, camera movement, shader programming, and Phong lighting. The engine is designed as a foundation for developing a full-featured game engine and demonstrates my applied knowledge in low-level graphics programming and engine architecture. Recent improvements introduced a functioning Scene/Entity relation aswell as extended ImGui Context Menus.
+DX11Engine is a custom rendering engine built from scratch in C++ using DirectX 11. It currently supports object loading, camera movement, shader programming, and Phong lighting. The engine is designed as a foundation for developing a full-featured game engine. Recent improvements introduced a functioning Scene/Entity relation aswell as extended ImGui Context Menus.
 
 ## Technologies Used
 - **C++** - core programming language
