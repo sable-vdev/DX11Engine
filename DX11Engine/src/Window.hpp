@@ -54,7 +54,7 @@ public:
 	static bool OpenWin32FileDialog(std::string& filePath)
 	{
 		HRESULT res;
-		if (FAILED(res = !CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)))
+		if (FAILED(res = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)))
 		{
 			_com_error err(res);
 			LOG_ERROR("CoInitializeEx failed 0x{:08X} ({})", static_cast<unsigned long>(res), Logger::WideToNarrow(err.ErrorMessage()));
