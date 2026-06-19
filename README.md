@@ -16,6 +16,10 @@ DX11Engine is a custom rendering engine built from scratch in C++ using DirectX 
 - Texture loading & shader programming — low-level graphics pipeline implementation
 - Basic lighting (Phong) — applied lighting models in real-time rendering
 
+## Currently Working On
+- ImGui Overlay Improvements
+- kind of ECS
+
 ## Planned Enhancements
 - Implement Physically Based Rendering (PBR) — advanced graphics rendering
 - Improve GUI overlay with ImGui — enhanced visualization and debugging
