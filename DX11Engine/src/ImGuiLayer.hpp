@@ -18,6 +18,12 @@ public:
 	void OnStart(ImGuiID dockSpaceId, const ImGuiViewport* imGuiViewport);
 private:
 	void DrawEntity(Entity* entity);
+	void DrawHierachy(Scene& scene);
+	void DrawInspector();
+	void DrawInfo(float frameRate);
+	void DrawDirectionalLight(Scene& scene);
+
+	void OnRightClickMenu(Scene& scene);
 private:
 	Entity* m_selectedEntity = nullptr;
 };

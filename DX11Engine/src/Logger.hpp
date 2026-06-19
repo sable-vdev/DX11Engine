@@ -32,8 +32,8 @@ private:
 #ifdef NDEBUG
 #define LOG_INFO(...) ((void)0)
 #define LOG_DEBUG(...) ((void)0)
-#define LOG_WARNING(...) ((void)0)
-#define LOG_ERROR(...) ((void)0)
+#define LOG_WARNING(...) Logger::GetLogger()->warning(__VA_ARGS__)
+#define LOG_ERROR(...) Logger::GetLogger()->error(__VA_ARGS__)
 
 #else
 

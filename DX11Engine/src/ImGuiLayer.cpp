@@ -14,6 +14,14 @@ ImGuiLayer::ImGuiLayer()
 	io.IniFilename = "imgui.ini";
 	ImGui::StyleColorsDark();
 
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.WindowBorderSize = 0;
+	style.ChildBorderSize = 0;
+	style.PopupBorderSize = 0;
+	style.FrameBorderSize = 0;
+
+	style.Colors[ImGuiCol_Separator] = ImVec4(0, 0, 0, 0);
+
 	ImGui_ImplWin32_Init(Application::Get().GetHWND());
 	ImGui_ImplDX11_Init(Application::Get().GetDevice(), Application::Get().GetContext());
 }
@@ -49,9 +57,10 @@ void ImGuiLayer::Render(Scene& scene)
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
 	ImGui::Begin("Dockspace", nullptr, windowFlags);
-	ImGui::PopStyleVar(2);
+	ImGui::PopStyleVar(3);
 
 	ImGuiID dockspaceId = ImGui::GetID("Dockspace");
 	ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
@@ -63,80 +72,25 @@ void ImGuiLayer::Render(Scene& scene)
 		firstRun = false;
 	}
 
-	static bool show_demo_window = false;
-	if (show_demo_window)
-		ImGui::ShowDemoWindow();
-
 	//windows
-
-	ImGui::Begin("Info");
-	ImGui::Checkbox("Demo Window", &show_demo_window);
-	ImGui::SameLine();
-
-	static bool vsync = Application::Get().GetVsync();
-	if(ImGui::Checkbox("Vsync", &vsync))
-		Application::Get().ToggleVsync(vsync);
-
-	ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-	ImGui::End();
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
 	ImGui::Begin("Viewport");
-	ImVec2 size = ImVec2(Application::Get().GetWidth(), Application::Get().GetHeight());
+	ImVec2 size = ImGui::GetContentRegionAvail();
 
 	ImGui::Image((ImTextureID)Application::Get().GetSRV(), size);
 
 	ImGui::End();
 	ImGui::PopStyleVar();
 
-	ImGui::Begin("Directional Light");
-	auto& light = Application::Get().GetScene().lightManager.GetLight(0);
-
-	ImGui::DragFloat3("Position", &light.data.position.x);
-	ImGui::DragFloat3("Rotation", &light.data.direction.x);
-	ImGui::DragFloat4("Ambient", &light.data.ambient.x);
-	ImGui::DragFloat4("Diffuse", &light.data.diffuse.x);
-	ImGui::DragFloat4("Specular", &light.data.specular.x);
-	ImGui::End();
-
-	ImGui::Begin("Hierachy");
-	if (ImGui::TreeNode(scene.name.c_str()))
-	{
-		for (auto& e : scene.GetEntities())
-		{
-			if (!e->parent)
-			{
-				DrawEntity(e.get());
-			}
-		}
-		ImGui::TreePop();
-	}
-	ImGui::End();
-
-	ImGui::Begin("Inspector");
-	if (m_selectedEntity)
-	{
-		ImGui::Separator();
-
-		ImGui::DragFloat3(
-			"Position",
-			&m_selectedEntity->transform.position.x,
-			0.1f);
-
-		ImGui::DragFloat3(
-			"Rotation",
-			&m_selectedEntity->transform.rotation.x,
-			0.1f);
-
-		ImGui::DragFloat3(
-			"Scale",
-			&m_selectedEntity->transform.scale.x,
-			0.1f);
-	}
-	ImGui::End();
+	DrawInfo(io.Framerate);
+	DrawInspector();
+	DrawDirectionalLight(scene);
+	DrawHierachy(scene);
 
 	ImGui::End();
+
 	io.DisplaySize = ImVec2(static_cast<float>(Application::Get().GetWidth()),
 		static_cast<float>(Application::Get().GetHeight()));
 }
@@ -170,6 +124,89 @@ void ImGuiLayer::DrawEntity(Entity* entity)
 	}
 }
 
+void ImGuiLayer::DrawHierachy(Scene& scene)
+{
+	if (ImGui::Begin("Hierachy"))
+	{
+		ImGui::SetNextItemOpen(true);
+		if (ImGui::TreeNode(scene.name.c_str()))
+		{
+			for (auto& e : scene.GetEntities())
+			{
+				if (!e->parent)
+				{
+					DrawEntity(e.get());
+				}
+			}
+			ImGui::TreePop();
+		}
+
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
+		{
+			ImGui::OpenPopup("ContextMenu");
+		}
+
+		OnRightClickMenu(scene);
+	}
+	ImGui::End();
+}
+
+void ImGuiLayer::DrawInspector()
+{
+	ImGui::Begin("Inspector");
+	if (m_selectedEntity)
+	{
+		ImGui::Separator();
+
+		ImGui::DragFloat3(
+			"Position",
+			&m_selectedEntity->transform.position.x,
+			0.1f);
+
+		ImGui::DragFloat3(
+			"Rotation",
+			&m_selectedEntity->transform.rotation.x,
+			0.1f);
+
+		ImGui::DragFloat3(
+			"Scale",
+			&m_selectedEntity->transform.scale.x,
+			0.1f);
+	}
+	ImGui::End();
+}
+
+void ImGuiLayer::DrawInfo(float frameRate)
+{
+	static bool show_demo_window = false;
+	if (show_demo_window)
+		ImGui::ShowDemoWindow();
+
+	ImGui::Begin("Info");
+	ImGui::Checkbox("Demo Window", &show_demo_window);
+	ImGui::SameLine();
+
+	static bool vsync = Application::Get().GetVsync();
+	if (ImGui::Checkbox("Vsync", &vsync))
+		Application::Get().ToggleVsync(vsync);
+
+	ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / frameRate, frameRate);
+	ImGui::End();
+}
+
+void ImGuiLayer::DrawDirectionalLight(Scene& scene)
+{
+	ImGui::Begin("Directional Light");
+	auto& light = scene.lightManager.GetLight(0);
+
+	ImGui::DragFloat3("Position", &light.data.position.x);
+	ImGui::DragFloat3("Rotation", &light.data.direction.x);
+	ImGui::DragFloat4("Ambient", &light.data.ambient.x);
+	ImGui::DragFloat4("Diffuse", &light.data.diffuse.x);
+	ImGui::DragFloat4("Specular", &light.data.specular.x);
+	ImGui::End();
+}
+
 void ImGuiLayer::OnStart(ImGuiID dockSpaceId, const ImGuiViewport* imGuiViewport)
 {
 	ImGui::DockBuilderRemoveNode(dockSpaceId);
@@ -178,15 +215,45 @@ void ImGuiLayer::OnStart(ImGuiID dockSpaceId, const ImGuiViewport* imGuiViewport
 	
 	ImGuiID dockMainId = dockSpaceId;
 	
-	ImGuiID dockLeft, dockRight;
+	ImGuiID dockLeft, dockRight, dockRightBottom;
 	ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.2f, &dockLeft, &dockMainId);
 	ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Right, 0.2f, &dockRight, &dockMainId);
+	ImGui::DockBuilderSplitNode(dockRight, ImGuiDir_Down, 0.2f, &dockRightBottom, &dockRight);
 	
 	ImGui::DockBuilderDockWindow("Viewport", dockMainId);
 	ImGui::DockBuilderDockWindow("Directional Light", dockRight);
-	ImGui::DockBuilderDockWindow("Info", dockRight);
+	ImGui::DockBuilderDockWindow("Info", dockRightBottom);
 	ImGui::DockBuilderDockWindow("Inspector", dockRight);
 	ImGui::DockBuilderDockWindow("Hierachy", dockLeft);
 	
 	ImGui::DockBuilderFinish(dockSpaceId);
+}
+
+void ImGuiLayer::OnRightClickMenu(Scene& scene)
+{
+	if (ImGui::BeginPopupContextItem("ContextMenu"))
+	{
+		if (ImGui::BeginMenu("Open"))
+		{
+			if (ImGui::BeginMenu("Entity"))
+			{
+				if (ImGui::MenuItem("New"))
+				{
+					std::string path = "";
+					if (Window::OpenWin32FileDialog(path) && !path.empty())
+					{
+						auto defMaterial = scene.GetOrCreateMaterial("default", Application::Get().GetDevice());
+
+						scene.CreateEntity(path, defMaterial);
+					}
+				}
+
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndPopup();
+	}
 }

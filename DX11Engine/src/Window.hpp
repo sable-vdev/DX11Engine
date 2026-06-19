@@ -4,7 +4,10 @@
 #include <Windows.h>
 #include <string>
 #include <iostream>
+#include <ShObjIdl_core.h>
+#include <comdef.h>
 
+#include "Logger.hpp"
 #include "EngineTypes.hpp"
 
 class Window
@@ -46,6 +49,65 @@ public:
 
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
+
+	//source https://stackoverflow.com/a/72429080
+	static bool OpenWin32FileDialog(std::string& filePath)
+	{
+		HRESULT res;
+		if (FAILED(res = !CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)))
+		{
+			_com_error err(res);
+			LOG_ERROR("CoInitializeEx failed 0x{:08X} ({})", static_cast<unsigned long>(res), Logger::WideToNarrow(err.ErrorMessage()));
+			return false;
+		}
+
+		IFileOpenDialog* fileDialog;
+		if (FAILED(res = CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&fileDialog))))
+		{
+			LOG_ERROR("CoCreateInstance failed 0x{:08X}", static_cast<unsigned long>(res));
+			CoUninitialize();
+			return false;
+		}
+
+		if (FAILED(res = fileDialog->Show(nullptr)))
+		{
+			if(res != HRESULT_FROM_WIN32(ERROR_CANCELLED))
+				LOG_ERROR("File Dialog Show failed 0x{:08X}", static_cast<unsigned long>(res));
+
+			fileDialog->Release();
+			CoUninitialize();
+			return false;
+		}
+
+		IShellItem* files;
+		if (FAILED(res = fileDialog->GetResult(&files)))
+		{
+			LOG_ERROR("File Dialog GetResult failed 0x{:08X}", static_cast<unsigned long>(res));
+			fileDialog->Release();
+			CoUninitialize();
+			return false;
+		}
+
+		PWSTR wPathString;
+		if (FAILED(res = files->GetDisplayName(SIGDN_FILESYSPATH, &wPathString)))
+		{
+			LOG_ERROR("File GetDisplayName failed 0x{:08X}", static_cast<unsigned long>(res));
+			files->Release();
+			fileDialog->Release();
+			CoUninitialize();
+			return false;
+		}
+
+		filePath = Logger::WideToNarrow(wPathString);
+
+		CoTaskMemFree(wPathString);
+		files->Release();
+		fileDialog->Release();
+		CoUninitialize();
+
+		return true;
+	}
+
 private:
 	LRESULT HandleMessages(UINT uMsg, WPARAM wParam, LPARAM lParam);
 private:

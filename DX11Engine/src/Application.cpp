@@ -35,6 +35,7 @@ Application::Application(U32 width, U32 height, const std::wstring& windowTitle,
 	auto defMaterial = m_scene->GetOrCreateMaterial("default", m_context->GetDevice());
 
 	m_scene->CreateEntity("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", defMaterial);
+	m_scene->CreateEntity("C:\\Dev\\DX11Engine\\DX11Engine\\resources\\backpack\\backpack.obj", defMaterial);
 }
 
 Application::~Application()
