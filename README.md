@@ -27,3 +27,7 @@ DX11Engine is a custom rendering engine built from scratch in C++ using DirectX 
 
 ## Inspiration
 This engine builds upon Rastertek's DirectX 11 tutorials as a learning foundation. All implementations have been extended and customized.
+
+## Current State / How the Engine Looks
+
+![EngineState](current_engine_state.png)
