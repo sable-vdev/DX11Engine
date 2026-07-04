@@ -7,7 +7,11 @@ class Camera
 public:
 	
 	Camera(I32 width, I32 height);
-	~Camera();
+	~Camera() = default;
+	Camera(const Camera& rhs) = default;
+	Camera(Camera&& rhs) = default;
+	Camera& operator=(const Camera& rhs) = default;
+	Camera& operator=(Camera&& rhs) = default;
 
 	void Update(float dt);
 	void OnResize(I32 width, I32 height);

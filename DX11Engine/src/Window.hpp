@@ -15,6 +15,11 @@ class Window
 public:
 	Window(U32 width, U32 height, const std::wstring& windowTitle);
 	~Window() = default;
+	Window(const Window& rhs) = default;
+	Window(Window&& rhs) = default;
+	Window& operator=(const Window& rhs) = default;
+	Window& operator=(Window&& rhs) = default;
+
 	
 	inline const HWND GetHWND() const { return m_hwnd; }
 	inline HWND GetHWND() { return m_hwnd; }

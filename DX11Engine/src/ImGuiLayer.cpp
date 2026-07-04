@@ -103,6 +103,9 @@ void ImGuiLayer::End()
 
 void ImGuiLayer::DrawEntity(Entity* entity)
 {
+	if (!entity)
+		return;
+
 	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 
 	if (m_selectedEntity == entity)
@@ -113,11 +116,13 @@ void ImGuiLayer::DrawEntity(Entity* entity)
 	if (ImGui::IsItemClicked())
 		m_selectedEntity = entity;
 
+	DragAndDropEntity(entity);
+
 	if (opened)
 	{
-		for (Entity* entity : entity->children)
+		for (Transform* child : entity->transform.children)
 		{
-			DrawEntity(entity);
+			DrawEntity(child->owner);
 		}
 
 		ImGui::TreePop();
@@ -128,18 +133,21 @@ void ImGuiLayer::DrawHierachy(Scene& scene)
 {
 	if (ImGui::Begin("Hierachy"))
 	{
-		ImGui::SetNextItemOpen(true);
-		if (ImGui::TreeNode(scene.name.c_str()))
+		if (ImGui::TreeNodeEx(scene.name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			for (auto& e : scene.GetEntities())
 			{
-				if (!e->parent)
+				if (!e->transform.parent)
 				{
 					DrawEntity(e.get());
 				}
 			}
 			ImGui::TreePop();
 		}
+
+		ImGui::InvisibleButton("##EmptySpace", ImGui::GetContentRegionAvail());
+
+		DragAndDropEntity(nullptr);
 
 		if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered())
 		{
@@ -156,22 +164,28 @@ void ImGuiLayer::DrawInspector()
 	ImGui::Begin("Inspector");
 	if (m_selectedEntity)
 	{
-		ImGui::Separator();
+		ImGui::Checkbox("##ActiveEntity", &m_selectedEntity->active);
+		ImGui::SameLine();
+		ImGui::InputText("##EntityName", &m_selectedEntity->name);
 
-		ImGui::DragFloat3(
-			"Position",
-			&m_selectedEntity->transform.position.x,
-			0.1f);
+		float3 pos = m_selectedEntity->transform.localPosition;
+		if (ImGui::DragFloat3("Position", &pos.x, 0.1f))
+		{
+			m_selectedEntity->transform.SetPosition(pos);
+		}
 
-		ImGui::DragFloat3(
-			"Rotation",
-			&m_selectedEntity->transform.rotation.x,
-			0.1f);
+		float3 rot = m_selectedEntity->transform.localRotation;
+		if (ImGui::DragFloat3("Rotation", &rot.x, 0.1f))
+		{
+			m_selectedEntity->transform.SetRotation(rot);
+		}
 
-		ImGui::DragFloat3(
-			"Scale",
-			&m_selectedEntity->transform.scale.x,
-			0.1f);
+		float3 scale = m_selectedEntity->transform.localScale;
+		if (ImGui::DragFloat3("Scale", &scale.x, 0.1f))
+		{
+			m_selectedEntity->transform.SetScale(scale);
+		}
+
 	}
 	ImGui::End();
 }
@@ -250,10 +264,41 @@ void ImGuiLayer::OnRightClickMenu(Scene& scene)
 
 				ImGui::EndMenu();
 			}
+			ImGui::EndMenu();
+			/*
+			if (ImGui::BeginMenu("Light"))
+			{
+				if (ImGui::MenuItem("New"))
+				{
+					
+				}
+			}
 
 			ImGui::EndMenu();
+			*/
 		}
 
 		ImGui::EndPopup();
+	}
+}
+
+void ImGuiLayer::DragAndDropEntity(Entity* entity)    
+{
+	if (ImGui::BeginDragDropSource())
+	{
+		ImGui::SetDragDropPayload("Entity_Node", &entity, sizeof(entity));
+		ImGui::EndDragDropSource();
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Entity_Node"))
+		{
+			Entity* e = *static_cast<Entity**>(payload->Data);
+
+			if (e->transform.SetParent(entity ? &entity->transform : nullptr))
+				m_selectedEntity == entity ? m_selectedEntity = nullptr : m_selectedEntity = entity;
+		}
+		ImGui::EndDragDropTarget();
 	}
 }

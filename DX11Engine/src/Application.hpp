@@ -2,25 +2,24 @@
 #include <memory>
 #include <vector>
 
-#include "Logger.hpp"
 #include "Window.hpp"
 #include "DX11Context.hpp"
 #include "Input.hpp"
 #include "Camera.hpp"
 #include "Timer.hpp"
-#include "Model.hpp"
 #include "ImGuiLayer.hpp"
-#include "ObjectLoader.hpp"
-#include "containers/TSQueue.hpp"
-#include "Sprite.hpp"
-#include "LightManager.hpp"
 #include "Scene.hpp"
 
 class Application
 {
 public:
 	Application(U32 width = 1280, U32 height = 720, const std::wstring& windowTitle = L"DX11 Engine", bool vsync = false);
-	~Application();
+	~Application() = default;
+	Application(const Application& rhs) = default;
+	Application(Application&& rhs) = default;
+	Application& operator=(const Application& rhs) = default;
+	Application& operator=(Application&& rhs) = default;
+
 	void Run();
 
 	void OnResize(U32 width, U32 height);

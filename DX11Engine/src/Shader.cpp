@@ -1,11 +1,11 @@
 #include "Shader.hpp"
 
-DX11VertexShader::DX11VertexShader(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName, D3D11_INPUT_ELEMENT_DESC* layout, U32 numElements)
+DX11VertexShader::DX11VertexShader(ID3D11Device* device, const std::filesystem::path& shaderPath, const std::wstring& shaderName, D3D11_INPUT_ELEMENT_DESC* layout, U32 numElements)
 {
 	Create(device, shaderPath, shaderName, layout, numElements);
 }
 
-void DX11VertexShader::Create(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName, D3D11_INPUT_ELEMENT_DESC* layout, U32 numElements)
+void DX11VertexShader::Create(ID3D11Device* device, const std::filesystem::path& shaderPath, const std::wstring& shaderName, D3D11_INPUT_ELEMENT_DESC* layout, U32 numElements)
 {
 	//strictness on deprecated syntax: honestly no idea if this is good or needed as it doesnt seem to have a huge performance impact
 	U32 flags = D3DCOMPILE_ENABLE_STRICTNESS;
@@ -14,9 +14,9 @@ void DX11VertexShader::Create(ID3D11Device* device, const std::wstring& shaderPa
 #endif
 	ComPtr<ID3DBlob> errorBlob;
 
-	std::wstring file = shaderPath + shaderName;
+	std::filesystem::path filePath = shaderPath / shaderName;
 
-	auto hr = D3DCompileFromFile(file.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0", flags, 0, m_vertexBuffer.GetAddressOf(), &errorBlob);
+	auto hr = D3DCompileFromFile(filePath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0", flags, 0, m_vertexBuffer.GetAddressOf(), &errorBlob);
 
 	if (FAILED(hr))
 	{
@@ -56,7 +56,7 @@ void DX11VertexShader::Bind(ID3D11DeviceContext* deviceContext) const
 }
 
 
-DX11PixelShader::DX11PixelShader(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName)
+DX11PixelShader::DX11PixelShader(ID3D11Device* device, const std::filesystem::path& shaderPath, const std::wstring& shaderName)
 {
 	Create(device, shaderPath, shaderName);
 }
@@ -69,7 +69,7 @@ void DX11PixelShader::Bind(ID3D11DeviceContext* deviceContext) const
 	}
 }
 
-void DX11PixelShader::Create(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName)
+void DX11PixelShader::Create(ID3D11Device* device, const std::filesystem::path& shaderPath, const std::wstring& shaderName)
 {
 	U32 flags = D3DCOMPILE_ENABLE_STRICTNESS;
 #ifndef NDEBUG
@@ -78,9 +78,9 @@ void DX11PixelShader::Create(ID3D11Device* device, const std::wstring& shaderPat
 
 	ComPtr<ID3DBlob> errorBlob;
 
-	std::wstring file = shaderPath + shaderName;
+	std::filesystem::path filePath = shaderPath / shaderName;
 
-	auto hr = D3DCompileFromFile(file.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0", flags, 0, m_pixelBuffer.GetAddressOf(), &errorBlob);
+	auto hr = D3DCompileFromFile(filePath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0", flags, 0, m_pixelBuffer.GetAddressOf(), &errorBlob);
 
 	if (FAILED(hr))
 	{

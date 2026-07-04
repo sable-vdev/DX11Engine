@@ -1,5 +1,18 @@
 #pragma once
 #include <DirectXMath.h>
+#include <filesystem>
+#include <Windows.h>
+
+static std::filesystem::path GetResourcePath()
+{
+#ifdef _DEBUG
+	return std::filesystem::current_path();
+#else
+	wchar_t path[MAX_PATH];
+	GetModuleFileNameW(nullptr, path, MAX_PATH);
+	return std::filesystem::path(path).parent_path();
+#endif
+}
 
 namespace DX = DirectX;
 

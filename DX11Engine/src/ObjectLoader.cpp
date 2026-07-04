@@ -22,7 +22,9 @@ std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
 
     Assimp::Importer importer;
 
-    const aiScene* scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
+    std::filesystem::path p = GetResourcePath() / "resources" / filename;
+
+    const aiScene* scene = importer.ReadFile(p.string(), aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -33,11 +35,10 @@ std::unique_ptr<Model> ObjectLoader::LoadObjectImple(const char* filename)
     }
 
     std::unique_ptr<Model> model = std::make_unique<Model>();
-    std::string name = std::filesystem::path(filename).filename().stem().string();
+    std::string name = p.filename().stem().string();
     model->name = name;
 
-    ProcessNode(*model, scene->mRootNode, scene, std::filesystem::path(filename).parent_path().string());
-
+    ProcessNode(*model, scene->mRootNode, scene, p.parent_path().string());
     if (model->meshes.empty())
     {
         LOG_ERROR("Failed to create model object, because the file seems to be empty");
@@ -107,14 +108,34 @@ void ObjectLoader::ProcessMesh(Model& model, aiMesh* mesh, const aiScene* scene,
     if (mesh->mMaterialIndex >= 0)
     {
         aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
-    
+        
         aiString str;
+
+        std::filesystem::path resourcePath = GetResourcePath();
+        std::filesystem::path p;
+
         mat->GetTexture(aiTextureType_DIFFUSE, 0, &str);
+        if (str.length > 0)
+        {
+            p = resourcePath / "resources" / directory / str.C_Str();
+            model.textures.diffuse = TextureManager::Load(p.string());
+        }
 
-        std::string path = directory + "\\" + str.C_Str();
+        str = aiString();
+        mat->GetTexture(aiTextureType_SPECULAR, 0, &str);
+        if (str.length > 0)
+        {
+            p = resourcePath / "resources" / directory / str.C_Str();
+            model.textures.specular = TextureManager::Load(p.string());
+        }
 
-        model.textures.diffuse = TextureManager::Load(path);
+        str = aiString();
+        mat->GetTexture(aiTextureType_SHININESS, 0, &str);
+        if (str.length > 0)
+        {
+            p = resourcePath / "resources" / directory / str.C_Str();
+            model.textures.shininess = TextureManager::Load(p.string());
+        }
     }
-
     model.meshes.push_back(Mesh(vertices, indices, Application::Get().GetDevice()));
 }

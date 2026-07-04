@@ -16,5 +16,4 @@ private:
 	static std::unique_ptr<Model> LoadObjectImple(const char* filename);
 	static void ProcessNode(Model& model, aiNode* node, const aiScene* scene, std::string directory);
 	static void ProcessMesh(Model& model, aiMesh* mesh, const aiScene* scene, std::string& directory);
-	//static void LoadTexture()
 };

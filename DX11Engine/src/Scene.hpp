@@ -21,15 +21,12 @@ public:
 	std::shared_ptr<Model> LoadModel(const std::string& path);
 	std::shared_ptr<Material> GetOrCreateMaterial(const std::string& path, ID3D11Device* device);
 	Entity* CreateEntity(const std::string& path, std::shared_ptr<Material> material);
-
+	void DestroyEntity(Entity* entity);
 
 	std::vector<std::unique_ptr<Entity>>& GetEntities() { return m_entities; }
 
 	void Update(float dt);
 	void Draw(ID3D11DeviceContext* context) const;
-
-private:
-	void CalculateWorld(Entity* e, DX::XMMATRIX parent);
 
 public:
 	LightManager lightManager;

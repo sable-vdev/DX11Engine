@@ -26,10 +26,6 @@ Camera::Camera(I32 width, I32 height) : m_position(0.0f, 0.0f, -20.0f, 0.0f), m_
 	s_cameraConstantInfo.cameraPosition = float4(m_position.x, m_position.y, m_position.z, 1.0f);
 }
 
-Camera::~Camera()
-{
-}
-
 void Camera::Update(float dt)
 {
 	float2 mousePos = Input::GetMousePos();

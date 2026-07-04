@@ -1,8 +1,10 @@
 #pragma once
 #include "EngineTypes.hpp"
+#include "Transform.hpp"
 
 struct alignas(16) LightData
 {
+	//Transform transform;
 	float4 position = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	float4 direction = float4(-0.5f, -1.0f, -0.5f, 0.0f);
 
@@ -14,6 +16,7 @@ struct alignas(16) LightData
 	float range = 0.0f;
 	float innerCone = 0.0f;
 	float outerCone = 0.0f;
+	U32 type;
 };
 
 

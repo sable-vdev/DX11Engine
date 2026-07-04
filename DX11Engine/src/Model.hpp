@@ -5,8 +5,6 @@
 class Model
 {
 public:
-	Model() = default;
-	
 	void Draw(ID3D11DeviceContext* context) const
 	{
 		for (const Mesh& mesh : meshes)

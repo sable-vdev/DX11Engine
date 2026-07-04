@@ -80,7 +80,7 @@ Texture::CPUTex Texture::LoadFromFile(const std::string& file)
 	{
 		LOG_ERROR("Failed to load the texture");
 		LOG_ERROR(stbi_failure_reason());
-		throw std::runtime_error("");
+		return {};
 	}
 
 	return tex;

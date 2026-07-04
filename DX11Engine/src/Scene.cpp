@@ -32,7 +32,7 @@ std::shared_ptr<Material> Scene::GetOrCreateMaterial(const std::string& path, ID
 
 Entity* Scene::CreateEntity(const std::string& path, std::shared_ptr<Material> material)
 {
-	std::unique_ptr<Entity> e = std::make_unique<Entity>(); //m_entities.emplace_back(std::filesystem::path(path).filename().stem().string()).get();
+	std::unique_ptr<Entity> e = std::make_unique<Entity>();
 	std::string name = std::filesystem::path(path).filename().stem().string();
 	name.at(0) = std::toupper(name.at(0));
 	e->name = name;
@@ -46,47 +46,47 @@ Entity* Scene::CreateEntity(const std::string& path, std::shared_ptr<Material> m
 	return ptr;
 }
 
-void Scene::CalculateWorld(Entity* e, DX::XMMATRIX parent)
+void Scene::DestroyEntity(Entity* entity)
 {
-	DX::XMMATRIX local = DX::XMLoadFloat4x4(&e->transform.local);
-	DX::XMMATRIX world = local * parent;
+	if (!entity) return;
 
-	DX::XMStoreFloat4x4(&e->transform.world, world);
+	std::vector<Entity*> remove;
+	remove.push_back(entity);
 
-	for (Entity* en : e->children)
+	for (size_t i{}; i < remove.size(); i++)
 	{
-		CalculateWorld(en, world);
+		for (Transform* child : remove[i]->transform.children)
+		{
+			remove.push_back(child->owner);
+		}
 	}
+	
+	m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(),
+		[&](const std::unique_ptr<Entity>& ptr)
+		{
+			return std::find(remove.begin(), remove.end(), ptr.get()) != remove.end();
+		}), 
+		m_entities.end());
 }
 
 void Scene::Update(float dt)
 {
-	for (auto& e : m_entities)
-	{
-		if (!e->active) continue;
-
-		e->transform.UpdateLocal();
-	}
-
-	for (auto& e : m_entities)
-	{
-		if (!e->active) continue;
-
-		if (!e->parent)
-		{
-			CalculateWorld(e.get(), DX::XMMatrixIdentity());
-		}
-	}
 }
 
 void Scene::Draw(ID3D11DeviceContext* context) const
 {
+	if (!context)
+	{
+		LOG_ERROR("Context is invalid");
+		return;
+	}
+
 	for (auto& e : m_entities)
 	{
 		if (!e->active || !e->model || !e->material)
 			continue;
 
-		DX::XMMATRIX worldMat = DX::XMLoadFloat4x4(&e->transform.world);
+		DX::XMMATRIX worldMat = DX::XMLoadFloat4x4(&e->transform.GetWorldMatrix());
 
 		CBDMatrix matrices{};
 		DX::XMStoreFloat4x4(&matrices.model, worldMat);

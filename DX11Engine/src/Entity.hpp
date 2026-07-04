@@ -12,18 +12,16 @@ public:
 	std::shared_ptr<Model> model;
 	std::shared_ptr<Material> material;
 
-	Entity* parent = nullptr;
-	std::vector<Entity*> children;
-
 	bool active = true;
 public:
-	Entity() = default;
-	~Entity() = default;
-
-	void RecalculateLocal(Transform& t)
+	Entity()
 	{
-		DX::XMMATRIX local = DX::XMMatrixScaling(t.scale.x, t.scale.y, t.scale.z)
-			* DX::XMMatrixRotationRollPitchYaw(t.rotation.x, t.rotation.y, t.rotation.z)
-			* DX::XMMatrixTranslation(t.position.x,	t.position.y, t.position.z);
+		transform.owner = this;
 	}
+
+	~Entity() = default;
+	Entity(const Entity& rhs) = default;
+	Entity(Entity&& rhs) = default;
+	Entity& operator=(const Entity& rhs) = default;
+	Entity& operator=(Entity&& rhs) = default;
 };

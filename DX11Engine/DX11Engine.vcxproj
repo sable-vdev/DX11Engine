@@ -123,6 +123,11 @@
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);assimp-vc143-mtd.lib;zlibstaticd.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)assimp\build\lib\$(Configuration);$(SolutionDir)imgui_lib\bin\x64\$(Configuration);%(AdditionalLibraryDirectories);$(SolutionDir)assimp\build\contrib\zlib\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y /I "$(ProjectDir)resources" "$(OutDir)resources"
+
+xcopy /E /Y /I "$(ProjectDir)shaders" "$(OutDir)shaders"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -143,10 +148,15 @@
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);assimp-vc143-mt.lib;zlibstatic.lib;</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)assimp\build\lib\$(Configuration);$(SolutionDir)imgui_lib\bin\x64\$(Configuration);%(AdditionalLibraryDirectories);$(SolutionDir)assimp\build\contrib\zlib\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y /I "$(ProjectDir)resources" "$(OutDir)resources"
+xcopy /E /Y /I "$(ProjectDir)shaders" "$(OutDir)shaders"
+
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Material.cpp" />
-    <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\LightManager.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\Mesh.cpp" />

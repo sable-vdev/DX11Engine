@@ -11,9 +11,11 @@ public:
 	static Material CreateDefault(ID3D11Device* device)
 	{
 		Material mat;
-		std::wstring path = L"..\\DX11Engine\\shaders\\";
-		mat.vertexShader = std::make_unique<DX11VertexShader>(device, path, L"SimpleVShader.hlsl", VertexLayouts::PositionNormalTexcoord::Desc, VertexLayouts::PositionNormalTexcoord::Count);
-		mat.pixelShader = std::make_unique<DX11PixelShader>(device, path, L"SimplePShader.hlsl");
+
+		MessageBoxW(nullptr, GetResourcePath().c_str(), L"Debug File Path", MB_OKCANCEL);
+		std::filesystem::path shaderPath = GetResourcePath() / "shaders";
+		mat.vertexShader = std::make_unique<DX11VertexShader>(device, shaderPath, L"SimpleVShader.hlsl", VertexLayouts::PositionNormalTexcoord::Desc, VertexLayouts::PositionNormalTexcoord::Count);
+		mat.pixelShader = std::make_unique<DX11PixelShader>(device, shaderPath, L"SimplePShader.hlsl");
 
 		return mat;
 	}
@@ -24,7 +26,22 @@ public:
 		pixelShader->Bind(context);
 
 		if (auto tex = TextureManager::Get(textures.diffuse))
-			tex->Bind(context);
+		{
+			if(tex != nullptr)
+				tex->Bind(context, 0);
+		}
+
+		if (auto tex = TextureManager::Get(textures.normal))
+		{
+			if (tex != nullptr)
+				tex->Bind(context, 1);
+		}
+
+		if (auto tex = TextureManager::Get(textures.specular))
+		{
+			if (tex != nullptr)
+				tex->Bind(context, 2);
+		}
 	}
 
 public:

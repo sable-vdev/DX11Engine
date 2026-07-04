@@ -32,7 +32,8 @@ U32 TextureManager::Load(const std::string& path)
 */
 Texture* TextureManager::Get(U32 id)
 {
-	assert(id < s_textures.size());
+	if (s_textures.size() < id)
+		return nullptr;
 
 	auto* tex = s_textures[id].get();
 

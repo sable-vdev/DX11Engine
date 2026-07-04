@@ -1,4 +1,7 @@
-Texture2D diff : register(t0);
+Texture2D diffTex : register(t0);
+Texture2D normalTex : register(t1);
+Texture2D specularTex : register(t2);
+
 SamplerState samplerState : register(s0);
 
 cbuffer LightData : register(b2)
@@ -48,11 +51,12 @@ void BlinnPhong(float3 viewDir, float3 normal, out float4 diffuseAmbient, out fl
 
 float4 main(PSInput input) : SV_TARGET
 {
-    float4 color = diff.Sample(samplerState, input.tex);
+    float4 color = diffTex.Sample(samplerState, input.tex);
+    float4 spec = specularTex.Sample(samplerState, input.tex);
     float4 diffAmbient, specularL;
     BlinnPhong(input.viewDir, input.Normal, diffAmbient, specularL);
     
-    color = color * diffAmbient + specularL;
+    color = color * diffAmbient + specularL * spec;
     
     return saturate(color);
 }

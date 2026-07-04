@@ -77,13 +77,13 @@ class DX11VertexShader
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 	DX11VertexShader() = default;
-	DX11VertexShader(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName, D3D11_INPUT_ELEMENT_DESC* layout, U32 numElements);
+	DX11VertexShader(ID3D11Device* device, const std::filesystem::path& shaderPath, const std::wstring& shaderName, D3D11_INPUT_ELEMENT_DESC* layout, U32 numElements);
 	void Bind(ID3D11DeviceContext* deviceContext) const;
 
 	//ID3D11VertexShader* GetShader() const { return m_vertexShader.Get(); }
 	//ID3D11InputLayout* GetLayout() const { return m_inputLayout.Get(); }
 private:
-	void Create(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName, D3D11_INPUT_ELEMENT_DESC* layout, U32 numElements);
+	void Create(ID3D11Device* device, const std::filesystem::path& shaderPath, const std::wstring& shaderName, D3D11_INPUT_ELEMENT_DESC* layout, U32 numElements);
 private:
 	ComPtr<ID3D11VertexShader> m_vertexShader;
 	ComPtr<ID3DBlob> m_vertexBuffer;
@@ -97,11 +97,11 @@ class DX11PixelShader
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 public:
 	DX11PixelShader() = default;
-	DX11PixelShader(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName);
+	DX11PixelShader(ID3D11Device* device, const std::filesystem::path& shaderPath, const std::wstring& shaderName);
 	void Bind(ID3D11DeviceContext* deviceContext) const;
 	//ID3D11PixelShader* GetShader() const { return m_pixelShader.Get(); }
 private:
-	void Create(ID3D11Device* device, const std::wstring& shaderPath, const std::wstring& shaderName);
+	void Create(ID3D11Device* device, const std::filesystem::path& shaderPath, const std::wstring& shaderName);
 private:
 	ComPtr<ID3D11PixelShader> m_pixelShader;
 	//using ID3Dblob since its version neutral (as per: https://learn.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ff728743(v=vs.85)
