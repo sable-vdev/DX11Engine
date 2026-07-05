@@ -14,7 +14,7 @@ std::shared_ptr<Model> Scene::LoadModel(const std::string& path)
 	if (model)
 		m_models.emplace(path, model);
 
-	return model;
+	return nullptr;
 }
 
 std::shared_ptr<Material> Scene::GetOrCreateMaterial(const std::string& path, ID3D11Device* device)
@@ -36,7 +36,11 @@ Entity* Scene::CreateEntity(const std::string& path, std::shared_ptr<Material> m
 	std::string name = std::filesystem::path(path).filename().stem().string();
 	name.at(0) = std::toupper(name.at(0));
 	e->name = name;
+
 	e->model = LoadModel(path);
+	if (!e->model)
+		return nullptr;
+
 	e->material = std::move(material);
 
 	Entity* ptr = e.get();
@@ -104,4 +108,29 @@ void Scene::Draw(ID3D11DeviceContext* context) const
 
 		e->model->Draw(context);
 	}
+}
+
+Entity* Scene::CreateSkybox(ID3D11Device* device)
+{
+	if (!device)
+		return nullptr;
+
+	std::unique_ptr<Entity> e = std::make_unique<Entity>();
+	e->name = "Skybox";
+
+	std::shared_ptr<Model> skyBox = std::make_shared<Model>();
+	Mesh mesh{Vertices::Cube::vertices, Vertices::Cube::indices, device};
+	
+	skyBox->meshes.push_back(std::move(mesh));
+
+	if (!e->model)
+		return nullptr;
+
+	e->material = nullptr;
+
+	Entity* ptr = e.get();
+
+	m_entities.push_back(std::move(e));
+
+	return ptr;
 }

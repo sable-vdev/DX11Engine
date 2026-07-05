@@ -10,6 +10,9 @@ Texture::Texture(const std::string& file)
 
 Texture::~Texture()
 {
+	if (m_cpuInfo.pixels)
+		stbi_image_free(m_cpuInfo.pixels);
+
 	if (m_shaderResourceView)
 		m_shaderResourceView.Reset();
 
@@ -48,10 +51,13 @@ void Texture::UploadToGpu(ID3D11Device* device)
 	subData.pSysMem = m_cpuInfo.pixels;
 	subData.SysMemPitch = static_cast<UINT>(m_cpuInfo.width * 4);
 
-	if (device)
+	if (!device)
 	{
-		ThrowIfFailed(device->CreateTexture2D(&desc, &subData, &m_texture));
+		LOG_ERROR("DX11 Device was null");
+		return;
 	}
+
+	ThrowIfFailed(device->CreateTexture2D(&desc, &subData, &m_texture));
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;

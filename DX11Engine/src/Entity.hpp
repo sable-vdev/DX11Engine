@@ -19,9 +19,24 @@ public:
 		transform.owner = this;
 	}
 
-	~Entity() = default;
+	virtual ~Entity() = default;
 	Entity(const Entity& rhs) = default;
 	Entity(Entity&& rhs) = default;
 	Entity& operator=(const Entity& rhs) = default;
 	Entity& operator=(Entity&& rhs) = default;
+};
+
+class Cube : public Entity 
+{
+public:
+	inline static Entity* CreateSkyBoxCube() 
+	{
+
+	}
+
+	~Cube() = default;
+	Cube(const Cube& rhs) = default;
+	Cube(Cube&& rhs) = default;
+	Cube& operator=(const Cube& rhs) = default;
+	Cube& operator=(Cube&& rhs) = default;
 };

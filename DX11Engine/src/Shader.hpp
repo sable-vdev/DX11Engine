@@ -71,6 +71,49 @@ namespace VertexLayouts
 	}
 };
 
+namespace Vertices 
+{
+	namespace Cube 
+	{
+		static float vertices[] = {
+			-1.0f,  1.0f, -1.0f,  // 0: left  top    back
+			 1.0f,  1.0f, -1.0f,  // 1: right top    back
+			 1.0f,  1.0f,  1.0f,  // 2: right top    front
+			-1.0f,  1.0f,  1.0f,  // 3: left  top    front
+			-1.0f, -1.0f, -1.0f,  // 4: left  bottom back
+			 1.0f, -1.0f, -1.0f,  // 5: right bottom back
+			 1.0f, -1.0f,  1.0f,  // 6: right bottom front
+			-1.0f, -1.0f,  1.0f   // 7: left  bottom front
+		};
+
+		static U32 indices[] = {
+			// back face (-Z)
+			0, 1, 5,
+			5, 4, 0,
+
+			// front face (+Z)
+			3, 2, 6,
+			6, 7, 3,
+
+			// left face (-X)
+			4, 0, 3,
+			3, 7, 4,
+
+			// right face (+X)
+			1, 5, 6,
+			6, 2, 1,
+
+			// top face (+Y)
+			0, 1, 2,
+			2, 3, 0,
+
+			// bottom face (-Y)
+			4, 5, 6,
+			6, 7, 4
+		};
+	}
+}
+
 class DX11VertexShader
 {
 	template<typename T>

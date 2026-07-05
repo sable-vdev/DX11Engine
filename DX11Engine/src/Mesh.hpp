@@ -20,6 +20,7 @@ struct Mesh
 {
 public: 
 	Mesh(const std::vector<Vertex>& verts, const std::vector<U32>& indices, ID3D11Device* device);
+	Mesh(const float vertices[], const U32 indices[], ID3D11Device* device);
 	void Draw(ID3D11DeviceContext* context) const;
 public:
 	DX11VertexBuffer m_vertexBuffer;

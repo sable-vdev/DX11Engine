@@ -12,7 +12,6 @@ public:
 			mesh.Draw(context);
 		}
 	}
-
 public:
 	std::string name;
 	std::vector<Mesh> meshes;

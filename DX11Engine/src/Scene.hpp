@@ -27,7 +27,7 @@ public:
 
 	void Update(float dt);
 	void Draw(ID3D11DeviceContext* context) const;
-
+	static Entity* CreateSkybox();
 public:
 	LightManager lightManager;
 	std::string name;
